@@ -9,9 +9,21 @@ declare global {
                         table: 'sys_module'
                         id: 'f1516ac7994c414fa8d27629829a964e'
                     }
+                    'odm-player-api': {
+                        table: 'sys_ws_definition'
+                        id: '479394f804ca46b9a4f735aeb62e5c58'
+                    }
                     package_json: {
                         table: 'sys_module'
                         id: 'b9263e9c87c2484ebb54da98a3c728a4'
+                    }
+                    'route-player-base': {
+                        table: 'sys_ws_operation'
+                        id: 'b2ad7e2b91d142fab8a3f98e1e142522'
+                    }
+                    'src_server_player-routes_ts': {
+                        table: 'sys_module'
+                        id: 'a2c47d6e51bf43b68e9f49a542fdfb66'
                     }
                 }
                 composite: [
