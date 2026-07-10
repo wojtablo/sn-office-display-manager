@@ -103,6 +103,30 @@ describe('access control (creator / service account / admin, else denied)', () =
         expect(html).not.toContain('SD Wall')
         expect(html).not.toContain('__ODM_DECK__')
     })
+    test('a PUBLIC slideshow is open to everyone (stranger allowed)', () => {
+        fake.__setTable(SLIDESHOWS, [
+            {
+                sys_id: 'ss-1',
+                name: 'Lobby Public',
+                sys_created_by: 'creator',
+                assigned_account: 'u-screen1',
+                active: true,
+                public: true,
+                links: '/a, /b',
+            },
+        ])
+        asStranger()
+        const res = fakeResponse()
+        serveDeckJson(fakeRequest({ screen: 'svc.display.sd-room1' }), res)
+        expect(res.state.status).toBe(200)
+        expect(JSON.parse(res.state.body).slideshow).toBe('Lobby Public')
+    })
+    test('a non-public slideshow still denies a stranger (regression guard)', () => {
+        asStranger()
+        const res = fakeResponse()
+        serveDeckJson(fakeRequest({ screen: 'svc.display.sd-room1' }), res)
+        expect(res.state.status).toBe(403)
+    })
 })
 
 describe('serveDeckJson resolution', () => {

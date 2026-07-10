@@ -294,6 +294,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '2d3f16dde0b342e099bee5f313499892'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'
@@ -623,6 +624,36 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: '646eaabff2174f6184f68f107cc94668'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.end_split'
+                            position: '9'
+                        }
+                    },
+                    {
+                        table: 'sys_dictionary'
+                        id: '65825aafb42c4e69b48db7ac122aaad1'
+                        key: {
+                            name: 'x_804244_odm_slideshow'
+                            element: 'public'
+                        }
+                    },
+                    {
                         table: 'sys_ui_section'
                         id: '689a38a15ce2409f9afba0f2e64d09aa'
                         key: {
@@ -647,6 +678,15 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_documentation'
+                        id: '6e8149579ac64d6dac2d4ecc618dc9fe'
+                        key: {
+                            name: 'x_804244_odm_slideshow'
+                            element: 'public'
+                            language: 'en'
+                        }
+                    },
+                    {
                         table: 'sys_ux_lib_asset'
                         id: '70c4c10c45a74547abc38f383b167694'
                         key: {
@@ -656,6 +696,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '729020554ac043eda678074efd5579d3'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'
@@ -737,6 +778,28 @@ declare global {
                                     name: 'x_804244_odm.manager'
                                 }
                             }
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '7bfeb22b617649ef87d884ad9faaca32'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'player_link'
+                            position: '6'
                         }
                     },
                     {
@@ -885,6 +948,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '9c54d7f5d1f94ef4925911762aa9aa1f'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'
@@ -959,6 +1023,28 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: '9fae9950472b45d181df39e12ad3856b'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'description'
+                            position: '11'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: '9feb7ce35e824414a36ca03234b45af0'
                         key: {
                             sys_ui_section: {
@@ -991,6 +1077,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'a87d664d4b694dca8a1b9fe6fab6a398'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'
@@ -1034,6 +1121,28 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: 'a99b7fbde286467d9e5bc8090a42829d'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.split'
+                            position: '5'
+                        }
+                    },
+                    {
                         table: 'sys_ui_page'
                         id: 'aed8bde9ff2d4b8d8021d4728d72731f'
                         key: {
@@ -1042,7 +1151,30 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: 'aff0b32e658341e896d384b47b988905'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'public'
+                            position: '4'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: 'b051a0c1ed524f61bb85dc016e20226d'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'
@@ -1202,6 +1334,28 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: 'cb29a55b6fcb450aba97a53c71ba1ced'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'slide_duration'
+                            position: '7'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: 'ce2ff9e63d5743d4a3b2884396b38592'
                         deleted: true
                         key: {
@@ -1317,6 +1471,28 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: 'e377cc7310b7454ca6006fd58a8e48a1'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'links'
+                            position: '10'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: 'e41c05e2033c4078802695b30cd3f34e'
                         key: {
                             sys_ui_section: {
@@ -1354,6 +1530,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'e5ce33522c084beea92af8887934de15'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'
@@ -1427,6 +1604,28 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: 'f25ea7a023a24569a612e16fd3f36e92'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'refresh_interval'
+                            position: '8'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: 'f3f1b83c4c844c64852a1d79a66453af'
                         deleted: true
                         key: {
@@ -1473,6 +1672,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'f71ab67834a949d9b4e57ccd1e7cd10c'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: 'c51c9b7a1e04492a996146947fe6ceee'

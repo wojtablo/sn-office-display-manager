@@ -130,6 +130,7 @@ generates the baseline.)
 | `hours_start` | String `HH:MM` (24h), default `07:00` | working-hours window start — player shows standby screen outside the window. **String, not glide_time**: the platform Time type is a UTC datetime in disguise (fiddly APIs, doubtful Fluent support); a regex-validated string is honest and sufficient for a wall-clock window |
 | `hours_end` | String `HH:MM` (24h), default `19:00` | working-hours window end. Invalid or empty `hours_*` values → player treats the deck as **always on** (fail open, never blank a screen due to a typo) |
 | `active` | Boolean, default true | only active slideshows play — the manager's kill switch |
+| `public` | Boolean, default false | when true, **anyone** can open this slideshow's player (bypasses the creator/service-account access check) |
 | `refresh_interval` | Integer (seconds), default 60 | how often the player polls for changes |
 
 "Created by" = standard `sys_created_by` audit field — no custom field needed.
@@ -160,8 +161,9 @@ instances; verified missing on the dev PDI). Create requires only a logged-in se
 
 **2. Player open-time check (REST handler, `resolveDecision`):**
 Opening `/player/{screen}` (or its deck) resolves the active slideshow for that
-screen, then allows only when the current user is the **creator**, the **assigned
-service account**, or a **platform admin** — otherwise an **access-denied page** (403).
+screen, then allows when the slideshow is **`public`**, OR the current user is the
+**creator**, the **assigned service account**, or a **platform admin** — otherwise an
+**access-denied page** (403). A `public` slideshow is open to everyone.
 The record is read with a plain `GlideRecord` (not `GlideRecordSecure`) so the handler
 can distinguish "no slideshow → idle card" from "exists but not yours → denied" and
 enforce the rule itself. No data leaks in the denied path.

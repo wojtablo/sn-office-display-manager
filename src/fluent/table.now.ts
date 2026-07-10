@@ -50,6 +50,11 @@ export const x_804244_odm_slideshow = Table({
             default: true,
             hint: 'Kill switch: unchecked slideshows never play',
         }),
+        public: BooleanColumn({
+            label: 'Public',
+            default: false,
+            hint: 'When checked, anyone can open this slideshow (bypasses the creator/service-account access check)',
+        }),
         player_link: UrlColumn({
             label: 'Player link',
             maxLength: 512,

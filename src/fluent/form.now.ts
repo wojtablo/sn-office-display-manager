@@ -21,6 +21,7 @@ export const slideshowForm = Form({
                         { type: 'table_field', field: 'name' },
                         { type: 'table_field', field: 'assigned_account' },
                         { type: 'table_field', field: 'active' },
+                        { type: 'table_field', field: 'public' },
                     ],
                     rightElements: [
                         { type: 'table_field', field: 'player_link' },

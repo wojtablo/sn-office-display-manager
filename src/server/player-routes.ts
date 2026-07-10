@@ -183,10 +183,12 @@ function resolveDecision(screenParam: string): Decision {
     gr.query()
     if (!gr.next()) return { status: 'idle', screen: screen, fields: null }
 
+    const publicFlag = gr.getValue('public')
+    const isPublic = publicFlag === '1' || publicFlag === 'true'
     const isCreator = gr.getValue('sys_created_by') === userName
     const isServiceAccount = gr.getValue('assigned_account') === userId
     const isAdmin = gs.hasRole('admin')
-    if (!isCreator && !isServiceAccount && !isAdmin) {
+    if (!isPublic && !isCreator && !isServiceAccount && !isAdmin) {
         return { status: 'denied', screen: screen, fields: null }
     }
 
