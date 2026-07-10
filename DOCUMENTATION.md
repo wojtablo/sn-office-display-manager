@@ -102,14 +102,11 @@ _accessibleFrom: package_private · actions: create, read, update, delete · aud
 <!-- BEGIN:generated:rest -->
 ### ODM Player — base `/api/x_804244_odm/player`
 
-ODM player API — serves the fully custom HTML player and its deck JSON.
+ODM player API — a single route: the deck JSON the player template polls.
 
 | Method | Path | Produces | Handler | Description |
 | --- | --- | --- | --- | --- |
-| `GET` | `/api/x_804244_odm/player` | text/html | `servePlayerHtml` | ODM player HTML for the logged-in user |
-| `GET` | `/api/x_804244_odm/player/deck` | application/json | `serveDeckJson` | Deck JSON for polling |
-| `GET` | `/api/x_804244_odm/player/{screen}` | text/html | `servePlayerHtml` | ODM player HTML for a specific screen |
-| `GET` | `/api/x_804244_odm/player/{screen}/deck` | application/json | `serveDeckJson` | Deck JSON for a specific screen |
+| `GET` | `/api/x_804244_odm/player/deck` | application/json | `serveDeckJson` | Deck JSON for the player to poll |
 <!-- END:generated:rest -->
 
 ## Business rules
@@ -199,7 +196,6 @@ Default form for Slideshow: identity + assignment on top (with the direct player
 | Export | Purpose |
 | --- | --- |
 | `renderPlayerHtml(screen)` | Server-side render for the direct UI page (/x_804244_odm_player.do): the browser gets the finished document, nothing client-side. |
-| `servePlayerHtml(request, response)` | GET /player and GET /player/{screen} -> the player HTML document. |
 | `serveDeckJson(request, response)` | GET /player/deck?screen=... |
 <!-- END:generated:app-code -->
 
@@ -215,7 +211,7 @@ Default form for Slideshow: identity + assignment on top (with the direct player
 | `src/fluent/form.now.ts` | Default form for Slideshow: identity + assignment on top (with the direct player link), content and timing below. |
 | `src/fluent/generated/keys.ts` |  |
 | `src/fluent/menu.now.ts` | Navigator: "Office Display Manager" - My slideshows -> any authenticated user; filtered to created-by-me OR assigned-to-me - All slideshows -> platform admin only; unfiltered Module visibility is navigation only; ACLs are the enforcement layer. |
-| `src/fluent/rest-api.now.ts` | ODM player API — serves the fully custom HTML player and its deck JSON. |
+| `src/fluent/rest-api.now.ts` | ODM player API — a single route: the deck JSON the player template polls. |
 | `src/fluent/script-include.now.ts` | Bridge for the direct UI page: Jelly can only call classic Script Includes, so this thin class require()s the server module and returns the fully rendered player HTML (deck + session token injected server-side). |
 | `src/fluent/table.now.ts` | The only custom table in ODM (SPEC.md Data Model). |
 | `src/fluent/ui-page.now.ts` | The browser entry point: /x_804244_odm_player.do?screen=<user_name> direct: true — the platform adds NOTHING (no UI16/Polaris wrapper, no platform JS/CSS). |
