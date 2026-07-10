@@ -10,3 +10,6 @@ target/
 /test-results/
 /playwright-report/
 /test/e2e/fixture-state.json
+
+# Local secrets
+.env
