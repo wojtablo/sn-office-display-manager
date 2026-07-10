@@ -85,6 +85,22 @@ describe('normalizeDeck', () => {
     })
 })
 
+describe('addCacheBuster', () => {
+    test('appends ?_odm=n to a bare URL', () => {
+        expect(P.addCacheBuster('/sys_user_list.do', 3)).toBe('/sys_user_list.do?_odm=3')
+    })
+    test('appends &_odm=n when a query string exists', () => {
+        expect(P.addCacheBuster('/list.do?a=1', 7)).toBe('/list.do?a=1&_odm=7')
+    })
+    test('works on absolute URLs', () => {
+        expect(P.addCacheBuster('https://example.com/x', 1)).toBe('https://example.com/x?_odm=1')
+    })
+    test('non-string input is returned untouched (never throws)', () => {
+        expect(P.addCacheBuster(null, 1)).toBe(null)
+        expect(P.addCacheBuster(undefined, 2)).toBe(undefined)
+    })
+})
+
 describe('deckChanged', () => {
     const base = {
         slideshow: 'Wall',

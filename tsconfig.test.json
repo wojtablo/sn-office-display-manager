@@ -8,5 +8,5 @@
         "skipLibCheck": true,
         "types": ["jest", "node"]
     },
-    "include": ["test/**/*.ts", "src/server/deck.ts"]
+    "include": ["test/**/*.ts", "src/server/*.ts"]
 }

@@ -108,12 +108,6 @@ window.__ODM_MOCK_DECK__ = {
     var slideTimer = null
     var inStandby = false
 
-    function addCacheBuster(url, n) {
-        try {
-            return url + (url.indexOf('?') === -1 ? '?' : '&') + '_odm=' + n
-        } catch (e) { return url }
-    }
-
     function setOverlays(state) {
         // state: 'play' | 'standby' | 'idle'
         standby.className = state === 'standby' ? 'overlay visible' : 'overlay'
@@ -127,7 +121,7 @@ window.__ODM_MOCK_DECK__ = {
     function showSlide(i) {
         try {
             cycle++
-            frame.src = addCacheBuster(deck.slides[i].url, cycle)
+            frame.src = P.addCacheBuster(deck.slides[i].url, cycle)
         } catch (e) { /* a broken slide must never stall the loop */ }
         slideStartedAt = Date.now()
         if (slideTimer) clearTimeout(slideTimer)

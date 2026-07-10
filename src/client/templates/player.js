@@ -102,6 +102,16 @@
         return fingerprint(currentDeck) !== fingerprint(polledDeck)
     }
 
+    /**
+     * Append a per-cycle cache-buster so re-showing the same URL reloads the
+     * iframe (single-slide decks must not show stale dashboards all day).
+     * Never throws; non-strings pass through untouched.
+     */
+    function addCacheBuster(url, n) {
+        if (typeof url !== 'string') return url
+        return url + (url.indexOf('?') === -1 ? '?' : '&') + '_odm=' + n
+    }
+
     var ODMPlayer = {
         parseHHMM: parseHHMM,
         isWithinHours: isWithinHours,
@@ -111,6 +121,7 @@
         isPlayable: isPlayable,
         fingerprint: fingerprint,
         deckChanged: deckChanged,
+        addCacheBuster: addCacheBuster,
     }
 
     global.ODMPlayer = ODMPlayer

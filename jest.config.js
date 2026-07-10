@@ -5,7 +5,16 @@ module.exports = {
     transform: {
         '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
     },
-    collectCoverageFrom: ['src/client/templates/player.js', 'src/server/deck.ts'],
+    moduleNameMapper: {
+        '^@servicenow/glide$': '<rootDir>/test/fakes/glide.js',
+    },
+    testPathIgnorePatterns: ['/node_modules/', '/fakes/'],
+    collectCoverageFrom: [
+        'src/client/templates/player.js',
+        'src/server/deck.ts',
+        'src/server/handlers.src.ts',
+        'scripts/template-lib.js',
+    ],
     coverageThreshold: {
         global: { statements: 80, branches: 80, functions: 80, lines: 80 },
     },
