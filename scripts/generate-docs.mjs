@@ -436,25 +436,22 @@ function analyzeTestFile(absPath) {
     const sf = parse(absPath)
     const describes = []
     let cases = 0
-    const literal = (n) =>
-        n && (ts.isStringLiteral(n) || n.kind === ts.SyntaxKind.NoSubstitutionTemplateLiteral) ? n.text : ''
+    // record the first-arg string title of a describe()/test.describe() call
+    const addDescribe = (node) => {
+        const n = node.arguments[0]
+        if (n && (ts.isStringLiteral(n) || n.kind === ts.SyntaxKind.NoSubstitutionTemplateLiteral)) describes.push(n.text)
+    }
     const visit = (node) => {
         if (ts.isCallExpression(node)) {
             const e = node.expression
             if (ts.isIdentifier(e)) {
                 // describe(...) / test(...) / it(...)
-                if (e.text === 'describe') {
-                    const t = literal(node.arguments[0])
-                    if (t) describes.push(t)
-                } else if (e.text === 'test' || e.text === 'it') {
-                    cases += 1
-                }
+                if (e.text === 'describe') addDescribe(node)
+                else if (e.text === 'test' || e.text === 'it') cases += 1
             } else if (ts.isPropertyAccessExpression(e) && ts.isIdentifier(e.expression)) {
                 // test.describe(...) (Playwright) / test.only(...) / it.skip(...)
-                if (e.name.text === 'describe') {
-                    const t = literal(node.arguments[0])
-                    if (t) describes.push(t)
-                } else if (
+                if (e.name.text === 'describe') addDescribe(node)
+                else if (
                     (e.expression.text === 'test' || e.expression.text === 'it') &&
                     (e.name.text === 'only' || e.name.text === 'skip')
                 ) {
