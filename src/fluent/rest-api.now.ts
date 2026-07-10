@@ -1,19 +1,16 @@
 import { RestApi } from '@servicenow/sdk/core'
-import { servePlayerHtml, serveDeckJson } from '../server/player-routes'
+import { serveDeckJson } from '../server/player-routes'
 
 /**
- * ODM player API — serves the fully custom HTML player and its deck JSON.
- * URI base: /api/x_804244_odm/player (no trailing slash!)
- * Unversioned by design (SPEC: permanent screen URLs).
+ * ODM player API — a single route: the deck JSON the player template polls.
+ * URI: GET /api/x_804244_odm/player/deck?screen=<user_name>
  *
- * Routes:
- *   GET /player                  -> HTML, deck of the logged-in user
- *   GET /player/deck?screen=...  -> JSON deck (player polling)
- *   GET /player/{screen}         -> HTML, deck of that screen's account
- *   GET /player/{screen}/deck    -> JSON deck
+ * The player HTML is NOT served here — it comes from the direct UI page
+ * /x_804244_odm_player.do, which renders in-process (see script-include.now.ts).
+ * This route exists only so the running player can poll for live deck changes.
  *
  * Auth: platform authentication required (session cookie or basic).
- * Data access: ACL-enforced in the handlers via GlideRecordSecure.
+ * Access: creator / assigned service account / admin / public — enforced in the handler.
  */
 export const playerApi = RestApi({
     $id: Now.ID['odm-player-api'],
@@ -21,17 +18,8 @@ export const playerApi = RestApi({
     serviceId: 'player',
     routes: [
         {
-            $id: Now.ID['route-player-base'],
-            name: 'Player (logged-in user)',
-            path: '/',
-            method: 'GET',
-            script: servePlayerHtml,
-            produces: 'text/html',
-            shortDescription: 'ODM player HTML for the logged-in user',
-        },
-        {
             $id: Now.ID['route-deck-base'],
-            name: 'Deck (query param)',
+            name: 'Deck',
             path: '/deck',
             method: 'GET',
             script: serveDeckJson,
@@ -43,25 +31,7 @@ export const playerApi = RestApi({
                     shortDescription: 'Technical account user_name of the screen',
                 },
             ],
-            shortDescription: 'Deck JSON for polling',
-        },
-        {
-            $id: Now.ID['route-player-screen'],
-            name: 'Player (screen)',
-            path: '/{screen}',
-            method: 'GET',
-            script: servePlayerHtml,
-            produces: 'text/html',
-            shortDescription: 'ODM player HTML for a specific screen',
-        },
-        {
-            $id: Now.ID['route-deck-screen'],
-            name: 'Deck (screen)',
-            path: '/{screen}/deck',
-            method: 'GET',
-            script: serveDeckJson,
-            produces: 'application/json',
-            shortDescription: 'Deck JSON for a specific screen',
+            shortDescription: 'Deck JSON for the player to poll',
         },
     ],
 })

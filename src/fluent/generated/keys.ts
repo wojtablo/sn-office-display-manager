@@ -84,14 +84,17 @@ declare global {
                     'route-deck-screen': {
                         table: 'sys_ws_operation'
                         id: '31645d1c6695463db538f11e03b857c6'
+                        deleted: true
                     }
                     'route-player-base': {
                         table: 'sys_ws_operation'
                         id: 'b2ad7e2b91d142fab8a3f98e1e142522'
+                        deleted: true
                     }
                     'route-player-screen': {
                         table: 'sys_ws_operation'
                         id: 'd12d08df16984211bd35dcd51daec9ec'
+                        deleted: true
                     }
                     'si-odm-player-page': {
                         table: 'sys_script_include'

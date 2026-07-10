@@ -208,15 +208,6 @@ function resolveDecision(screenParam: string): Decision {
     }
 }
 
-function pathParam(request: any, name: string): string {
-    try {
-        const v = request.pathParams && request.pathParams[name]
-        return v ? String(v) : ''
-    } catch (e) {
-        return ''
-    }
-}
-
 function queryParam(request: any, name: string): string {
     try {
         const v = request.queryParams && request.queryParams[name]
@@ -280,38 +271,9 @@ export function renderPlayerHtml(screen: string): string {
     }
 }
 
-/** GET /player and GET /player/{screen} -> the player HTML document. */
-export function servePlayerHtml(request: any, response: any): void {
-    const screen = pathParam(request, 'screen')
-    // route-matching guard: if a client requests /player/deck, serve deck JSON
-    if (screen === 'deck') {
-        serveDeckJson(request, response)
-        return
-    }
-    response.setContentType('text/html')
-    try {
-        const decision = resolveDecision(screen)
-        if (decision.status === 'denied') {
-            response.setStatus(403)
-            response.getStreamWriter().writeString(ACCESS_DENIED_HTML)
-            return
-        }
-        response.setStatus(200)
-        response.getStreamWriter().writeString(injectDeck(ROTATOR_HTML, deckFrom(decision)))
-    } catch (e) {
-        try {
-            response.setStatus(200)
-            response.getStreamWriter().writeString(injectDeck(ROTATOR_HTML, buildDeck(screen || '', null)))
-        } catch (e2) {
-            response.setStatus(500)
-        }
-    }
-}
-
-/** GET /player/deck?screen=... and GET /player/{screen}/deck -> deck JSON (polling). */
+/** GET /player/deck?screen=... -> deck JSON (the player's live-update poll). */
 export function serveDeckJson(request: any, response: any): void {
-    const fromPath = pathParam(request, 'screen')
-    const screen = fromPath && fromPath !== 'deck' ? fromPath : queryParam(request, 'screen')
+    const screen = queryParam(request, 'screen')
     response.setContentType('application/json')
     try {
         const decision = resolveDecision(screen)
