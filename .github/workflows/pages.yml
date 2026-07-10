@@ -1,0 +1,51 @@
+# Publish the generated documentation to GitHub Pages.
+# One-time setup: repo Settings → Pages → Source = "GitHub Actions".
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths: # only rebuild the site when the docs (or the site builder) change
+      - DOCUMENTATION.md
+      - scripts/build-site.mjs
+      - .github/workflows/pages.yml
+  workflow_dispatch: # allow a manual publish from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two Pages deploys at once; a newer push supersedes an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Render committed DOCUMENTATION.md → site/index.html. CI's freshness gate
+      # already guarantees the committed docs match source, so no regen here.
+      - run: npm run site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

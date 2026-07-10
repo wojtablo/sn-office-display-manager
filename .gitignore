@@ -3,6 +3,7 @@
 dist/
 node_modules/
 target/
+site/
 *.tsbuildinfo
 .jest_cache.claude/
 
