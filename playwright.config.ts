@@ -1,5 +1,12 @@
 import { defineConfig, devices } from '@playwright/test'
 
+// Load a local, gitignored .env if present (Node >= 20.12 / 22). Inline env still wins.
+try {
+    ;(process as unknown as { loadEnvFile: (p?: string) => void }).loadEnvFile('.env')
+} catch {
+    /* no .env or older Node — rely on real env vars */
+}
+
 /**
  * E2E config — drives a real browser against a live ServiceNow instance.
  * Secrets come from env (never committed). Required:
