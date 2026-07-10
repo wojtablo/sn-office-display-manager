@@ -61,9 +61,33 @@ declare global {
                         table: 'sys_module'
                         id: 'b9263e9c87c2484ebb54da98a3c728a4'
                     }
+                    'param-deck-screen': {
+                        table: 'sys_ws_query_parameter'
+                        id: 'd144e7b829ec47dbb35ab6079ba40fbf'
+                    }
+                    'route-deck-base': {
+                        table: 'sys_ws_operation'
+                        id: '3ea995c6c89143d08761f751d6a28bcb'
+                    }
+                    'route-deck-screen': {
+                        table: 'sys_ws_operation'
+                        id: '31645d1c6695463db538f11e03b857c6'
+                    }
                     'route-player-base': {
                         table: 'sys_ws_operation'
                         id: 'b2ad7e2b91d142fab8a3f98e1e142522'
+                    }
+                    'route-player-screen': {
+                        table: 'sys_ws_operation'
+                        id: 'd12d08df16984211bd35dcd51daec9ec'
+                    }
+                    src_server_deck_ts: {
+                        table: 'sys_module'
+                        id: '89021756f4574f0f9d6792a90cc1ec4d'
+                    }
+                    src_server_handlers_src_ts: {
+                        table: 'sys_module'
+                        id: '9b20b5c28a764d92a49ab869ffa8e917'
                     }
                     src_server_OdmTemplates_ts: {
                         table: 'sys_module'
@@ -406,6 +430,14 @@ declare global {
                         id: 'eb9b9e14ebbd42d390c3c1a226f8147f'
                         key: {
                             name: 'x_804244_odm/templates/player'
+                        }
+                    },
+                    {
+                        table: 'sys_ws_query_parameter_map'
+                        id: 'f70e1d609fc64ae5bccf11e08bc56951'
+                        key: {
+                            web_service_operation: '3ea995c6c89143d08761f751d6a28bcb'
+                            web_service_query_parameter: 'd144e7b829ec47dbb35ab6079ba40fbf'
                         }
                     },
                     {

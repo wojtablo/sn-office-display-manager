@@ -61,5 +61,6 @@ export const x_804244_odm_slideshow = Table({
     actions: ['create', 'read', 'update', 'delete'],
     allowClientScripts: true,
     allowNewFields: true,
+    allowWebServiceAccess: true, // Table API allowed; ACLs still gate every row/field
     audit: true,
 })

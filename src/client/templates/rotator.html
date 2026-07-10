@@ -200,8 +200,10 @@ window.__ODM_MOCK_DECK__ = {
     /* deck polling: live updates + session keep-alive; also the idle-retry path */
     function poll() {
         try {
-            var url = window.location.pathname.replace(/\/$/, '') + '/deck'
             if (window.location.protocol === 'file:') return // local dev: no server
+            var m = /^(.*\/player)(\/|$)/.exec(window.location.pathname)
+            var base = m ? m[1] : window.location.pathname.replace(/\/$/, '')
+            var url = base + '/deck?screen=' + encodeURIComponent(deck.screen || '')
             fetch(url, { headers: { Accept: 'application/json' } })
                 .then(function (r) { return r.ok ? r.json() : null })
                 .then(function (fresh) {

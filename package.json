@@ -17,10 +17,10 @@
     },
     "devDependencies": {
         "@servicenow/glide": "27.0.5",
-        "@servicenow/sdk": "4.7.0",
+        "@servicenow/sdk": "^4.8.1",
         "@types/jest": "^30.0.0",
         "jest": "^30.4.2",
         "ts-jest": "^29.4.11",
-        "typescript": "^7.0.2"
+        "typescript": "^5.9.3"
     }
 }

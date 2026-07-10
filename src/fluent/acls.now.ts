@@ -14,6 +14,7 @@ export const slideshowCreate = Acl({
     type: 'record',
     table: 'x_804244_odm_slideshow',
     operation: 'create',
+    adminOverrides: true,
     roles: [manager],
     description: 'Managers (and admins) create slideshows',
 })
@@ -23,6 +24,7 @@ export const slideshowReadManager = Acl({
     type: 'record',
     table: 'x_804244_odm_slideshow',
     operation: 'read',
+    adminOverrides: true,
     roles: [manager],
     description: 'Managers (and admins) read all slideshows',
 })
@@ -32,6 +34,7 @@ export const slideshowReadDisplayOwn = Acl({
     type: 'record',
     table: 'x_804244_odm_slideshow',
     operation: 'read',
+    adminOverrides: true,
     roles: [display],
     condition: 'assigned_account=javascript:gs.getUserID()',
     description: 'Display accounts read only their own assigned slideshow',
@@ -42,6 +45,7 @@ export const slideshowWrite = Acl({
     type: 'record',
     table: 'x_804244_odm_slideshow',
     operation: 'write',
+    adminOverrides: true,
     roles: [manager],
     description: 'Managers (and admins) update slideshows',
 })
@@ -51,6 +55,7 @@ export const slideshowDelete = Acl({
     type: 'record',
     table: 'x_804244_odm_slideshow',
     operation: 'delete',
+    adminOverrides: true,
     roles: [manager],
     description: 'Managers (and admins) delete slideshows',
 })
@@ -63,6 +68,7 @@ export const slideshowFieldsRead = Acl({
     table: 'x_804244_odm_slideshow',
     field: '*',
     operation: 'read',
+    adminOverrides: true,
     roles: [manager, display],
     description: 'Field read for app roles (record ACLs gate row access)',
 })
@@ -73,6 +79,7 @@ export const slideshowFieldsWrite = Acl({
     table: 'x_804244_odm_slideshow',
     field: '*',
     operation: 'write',
+    adminOverrides: true,
     roles: [manager],
     description: 'Field write for managers (and admins)',
 })
