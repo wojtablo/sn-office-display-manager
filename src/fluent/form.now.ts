@@ -1,12 +1,16 @@
-import { Form } from '@servicenow/sdk/core'
+import { Form, default_view } from '@servicenow/sdk/core'
 
 /**
  * Default form for Slideshow: identity + assignment on top (with the direct
  * player link), content and timing below.
+ *
+ * NOTE: use the imported `default_view` symbol, NOT the string 'default_view' —
+ * the string creates a separate view literally named "default_view" that records
+ * never open in; the symbol targets the real (empty-name) Default view.
  */
 export const slideshowForm = Form({
     table: 'x_804244_odm_slideshow',
-    view: 'default_view',
+    view: default_view,
     sections: [
         {
             caption: 'Slideshow',

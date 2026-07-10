@@ -125,6 +125,7 @@ declare global {
                     {
                         table: 'sys_ui_section'
                         id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
+                        deleted: true
                         key: {
                             name: 'x_804244_odm_slideshow'
                             caption: 'Slideshow'
@@ -170,6 +171,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '1690215dfc134e47ad9ea781ab06c083'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -200,7 +202,52 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: '1df78d48cc254a06b992aebf408feb4d'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.begin_split'
+                            position: '0'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '2191f88d53c143ad9b2fd30a4ede609c'
+                        key: {
+                            sys_ui_section: {
+                                id: '689a38a15ce2409f9afba0f2e64d09aa'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Working hours'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'hours_end'
+                            position: '3'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: '22b193518beb48c391703ea5edef0daf'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -221,8 +268,31 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: '2d3f16dde0b342e099bee5f313499892'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.end_split'
+                            position: '8'
+                        }
+                    },
+                    {
                         table: 'sys_ui_section'
                         id: '2eb2deb1904240f1a681119933721dad'
+                        deleted: true
                         key: {
                             name: 'x_804244_odm_slideshow'
                             caption: 'Working hours'
@@ -238,6 +308,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '3799ac9925f146ea9bcc08abd073b586'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '2eb2deb1904240f1a681119933721dad'
@@ -260,6 +331,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '3d2211eb82454056a8959f8f50ce6101'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '2eb2deb1904240f1a681119933721dad'
@@ -282,6 +354,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '3ee401b20b5f446a83d3067eec4fa16f'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -320,6 +393,94 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_form_section'
+                        id: '45db4f89441c4ff4893f908e9687e221'
+                        key: {
+                            sys_ui_form: {
+                                id: '9cc19d9027f4443e919abc9450822e69'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '46c1371a1e074d379b3b9cac5c96b151'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'active'
+                            position: '3'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_form_section'
+                        id: '4724f853eaa347318ad6faab8a38755f'
+                        key: {
+                            sys_ui_form: {
+                                id: '9cc19d9027f4443e919abc9450822e69'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            sys_ui_section: {
+                                id: '689a38a15ce2409f9afba0f2e64d09aa'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Working hours'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                        }
+                    },
+                    {
                         table: 'sys_dictionary'
                         id: '4e250e984aab4f5fae3cda83c93045fa'
                         key: {
@@ -347,6 +508,7 @@ declare global {
                     {
                         table: 'sys_ui_form_section'
                         id: '553bc763fe2741a29b0aa677d2bc7e0a'
+                        deleted: true
                         key: {
                             sys_ui_form: {
                                 id: '75c135853b5d44be8c6ae6b5c5962fe5'
@@ -408,6 +570,21 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_section'
+                        id: '689a38a15ce2409f9afba0f2e64d09aa'
+                        key: {
+                            name: 'x_804244_odm_slideshow'
+                            caption: 'Working hours'
+                            view: {
+                                id: 'Default view'
+                                key: {
+                                    name: 'NULL'
+                                }
+                            }
+                            sys_domain: 'global'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: '6daccf92d4334a74afd02a2925cf59a0'
                         key: {
@@ -424,8 +601,53 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: '729020554ac043eda678074efd5579d3'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'slide_duration'
+                            position: '6'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '729b98d9aaa04437966cd4c58b094aaf'
+                        key: {
+                            sys_ui_section: {
+                                id: '689a38a15ce2409f9afba0f2e64d09aa'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Working hours'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'hours_start'
+                            position: '1'
+                        }
+                    },
+                    {
                         table: 'sys_ui_form'
                         id: '75c135853b5d44be8c6ae6b5c5962fe5'
+                        deleted: true
                         key: {
                             name: 'x_804244_odm_slideshow'
                             view: {
@@ -478,7 +700,30 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: '8013680a60064c0fa24396f049b4d9d5'
+                        key: {
+                            sys_ui_section: {
+                                id: '689a38a15ce2409f9afba0f2e64d09aa'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Working hours'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.end_split'
+                            position: '4'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: '837f6f5867eb48e69d5cdb7c0a3bc05e'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -501,6 +746,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: '84c9e4f6808c49e2a6341131e22379a2'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '2eb2deb1904240f1a681119933721dad'
@@ -527,6 +773,28 @@ declare global {
                             name: 'x_804244_odm_slideshow'
                             element: 'slide_duration'
                             language: 'en'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '8c2e148699594c58bf287a2267bf93ab'
+                        key: {
+                            sys_ui_section: {
+                                id: '689a38a15ce2409f9afba0f2e64d09aa'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Working hours'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.split'
+                            position: '2'
                         }
                     },
                     {
@@ -559,6 +827,28 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: '9c54d7f5d1f94ef4925911762aa9aa1f'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'description'
+                            position: '10'
+                        }
+                    },
+                    {
                         table: 'sys_user_role'
                         id: '9c8efd09c2e440299e5b90a0dad45a8a'
                         key: {
@@ -566,8 +856,23 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_form'
+                        id: '9cc19d9027f4443e919abc9450822e69'
+                        key: {
+                            name: 'x_804244_odm_slideshow'
+                            view: {
+                                id: 'Default view'
+                                key: {
+                                    name: 'NULL'
+                                }
+                            }
+                            sys_domain: 'global'
+                        }
+                    },
+                    {
                         table: 'sys_ui_element'
                         id: '9eab9ac4ba624fb88d993163e093f8d9'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -596,6 +901,28 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: '9feb7ce35e824414a36ca03234b45af0'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'assigned_account'
+                            position: '2'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: 'a0ff3462fbfa416ebfe2ef83ca301c88'
                         key: {
@@ -606,7 +933,30 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: 'a87d664d4b694dca8a1b9fe6fab6a398'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'player_link'
+                            position: '5'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: 'a996a33098494320a5443107c6dfb665'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -631,6 +981,28 @@ declare global {
                         id: 'aed8bde9ff2d4b8d8021d4728d72731f'
                         key: {
                             endpoint: 'x_804244_odm_player.do'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'b051a0c1ed524f61bb85dc016e20226d'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.split'
+                            position: '4'
                         }
                     },
                     {
@@ -671,6 +1043,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'bf18797b03124c37921f66fdf5efe7e6'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '2eb2deb1904240f1a681119933721dad'
@@ -704,6 +1077,21 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_section'
+                        id: 'c51c9b7a1e04492a996146947fe6ceee'
+                        key: {
+                            name: 'x_804244_odm_slideshow'
+                            caption: 'Slideshow'
+                            view: {
+                                id: 'Default view'
+                                key: {
+                                    name: 'NULL'
+                                }
+                            }
+                            sys_domain: 'global'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: 'c7667277571348e9b1569b86b9357959'
                         key: {
@@ -724,6 +1112,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'c9f17af9ec4546f98ac85bb522a0052a'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -746,6 +1135,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'ce2ff9e63d5743d4a3b2884396b38592'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '2eb2deb1904240f1a681119933721dad'
@@ -788,6 +1178,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'dbce015fac81476c90f4bdc5cd32895d'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -810,6 +1201,7 @@ declare global {
                     {
                         table: 'sys_ui_form_section'
                         id: 'de678792d3a44996ab08f725612cf221'
+                        deleted: true
                         key: {
                             sys_ui_form: {
                                 id: '75c135853b5d44be8c6ae6b5c5962fe5'
@@ -855,7 +1247,74 @@ declare global {
                     },
                     {
                         table: 'sys_ui_element'
+                        id: 'e41c05e2033c4078802695b30cd3f34e'
+                        key: {
+                            sys_ui_section: {
+                                id: '689a38a15ce2409f9afba0f2e64d09aa'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Working hours'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.begin_split'
+                            position: '0'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'e5ce33522c084beea92af8887934de15'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'links'
+                            position: '9'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'ea8ef30967f84acb85c9f929ccd1e6c4'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'name'
+                            position: '1'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
                         id: 'eb3e1c8b479c4b9bb4588bbd72bba9b9'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -885,6 +1344,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'f3f1b83c4c844c64852a1d79a66453af'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
@@ -913,6 +1373,28 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: 'f71ab67834a949d9b4e57ccd1e7cd10c'
+                        key: {
+                            sys_ui_section: {
+                                id: 'c51c9b7a1e04492a996146947fe6ceee'
+                                key: {
+                                    name: 'x_804244_odm_slideshow'
+                                    caption: 'Slideshow'
+                                    view: {
+                                        id: 'Default view'
+                                        key: {
+                                            name: 'NULL'
+                                        }
+                                    }
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'refresh_interval'
+                            position: '7'
+                        }
+                    },
+                    {
                         table: 'sys_dictionary'
                         id: 'faa260a877714e43a8f87429a73ad10e'
                         key: {
@@ -923,6 +1405,7 @@ declare global {
                     {
                         table: 'sys_ui_element'
                         id: 'fef4c56c296743d896c55b5bfd1d3e9b'
+                        deleted: true
                         key: {
                             sys_ui_section: {
                                 id: '0d69c4c9fe2a4d758ea4efc5d60f68a9'
