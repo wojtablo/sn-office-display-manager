@@ -1,4 +1,4 @@
-import { Table, StringColumn, IntegerColumn, BooleanColumn, ReferenceColumn } from '@servicenow/sdk/core'
+import { Table, StringColumn, IntegerColumn, BooleanColumn, ReferenceColumn, UrlColumn } from '@servicenow/sdk/core'
 
 /**
  * The only custom table in ODM (SPEC.md Data Model).
@@ -49,6 +49,13 @@ export const x_804244_odm_slideshow = Table({
             label: 'Active',
             default: true,
             hint: 'Kill switch: unchecked slideshows never play',
+        }),
+        player_link: UrlColumn({
+            label: 'Player link',
+            maxLength: 512,
+            // not dictionary-readOnly: that would block the business rule's setValue too;
+            // manual edits are futile anyway — the rule rewrites the field on every save
+            hint: 'Direct link to this slideshow on its screen — maintained automatically from the service account',
         }),
         refresh_interval: IntegerColumn({
             label: 'Refresh interval (s)',

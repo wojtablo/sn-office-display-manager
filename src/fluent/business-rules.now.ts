@@ -35,3 +35,31 @@ export const uniqueActiveAssignment = BusinessRule({
     }
 })(current, previous);`,
 })
+
+/**
+ * Keeps `player_link` in sync with the assigned service account:
+ * <instance>/x_804244_odm_player.do?screen=<user_name>. Cleared when
+ * no account is assigned.
+ */
+export const maintainPlayerLink = BusinessRule({
+    $id: Now.ID['br-maintain-player-link'],
+    name: 'ODM: maintain player link',
+    table: 'x_804244_odm_slideshow',
+    when: 'before',
+    action: ['insert', 'update'],
+    order: 200,
+    active: true,
+    description: 'Sets the read-only player_link field from the assigned service account',
+    script: `(function executeRule(current, previous /*null when async*/) {
+    var link = '';
+    if (!current.assigned_account.nil()) {
+        var base = String(gs.getProperty('glide.servlet.uri') || '');
+        if (base && base.charAt(base.length - 1) !== '/') {
+            base += '/';
+        }
+        var screen = String(current.assigned_account.user_name);
+        link = base + 'x_804244_odm_player.do?screen=' + encodeURIComponent(screen);
+    }
+    current.setValue('player_link', link);
+})(current, previous);`,
+})
