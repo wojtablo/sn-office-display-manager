@@ -197,10 +197,12 @@ window.__ODM_MOCK_DECK__ = {
     function poll() {
         try {
             if (window.location.protocol === 'file:') return // local dev: no server
-            var m = /^(.*\/player)(\/|$)/.exec(window.location.pathname)
-            var base = m ? m[1] : window.location.pathname.replace(/\/$/, '')
-            var url = base + '/deck?screen=' + encodeURIComponent(deck.screen || '')
-            fetch(url, { headers: { Accept: 'application/json' } })
+            // fixed base: the page may be served via the REST route OR written
+            // into the document by the x_804244_odm_player.do bootstrap
+            var url = '/api/x_804244_odm/player/deck?screen=' + encodeURIComponent(deck.screen || '')
+            var headers = { Accept: 'application/json' }
+            if (deck.token) headers['X-UserToken'] = deck.token // cookie-only REST calls are rejected without it
+            fetch(url, { headers: headers })
                 .then(function (r) { return r.ok ? r.json() : null })
                 .then(function (fresh) {
                     if (!fresh) return
@@ -208,6 +210,8 @@ window.__ODM_MOCK_DECK__ = {
                         deck = P.normalizeDeck(fresh)
                         index = 0
                         applyState(true) // restart from slide 0 of the new deck
+                    } else if (typeof fresh.token === 'string' && fresh.token) {
+                        deck.token = fresh.token // keep the polling token fresh
                     }
                 })
                 .catch(function () { /* transient network errors are fine */ })

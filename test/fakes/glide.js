@@ -27,6 +27,7 @@ function __reset() {
 const gs = {
     getUserID: () => user.id,
     getUserName: () => user.name,
+    getSessionToken: () => 'fake-session-token-123',
     addErrorMessage: () => undefined,
     info: () => undefined,
 }

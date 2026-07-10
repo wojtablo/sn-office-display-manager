@@ -123,6 +123,17 @@ describe('fingerprint has no separator-collision ambiguity', () => {
     })
 })
 
+describe('session token pass-through', () => {
+    test('normalizeDeck preserves the token', () => {
+        expect(P.normalizeDeck({ token: 'abc' }).token).toBe('abc')
+        expect(P.normalizeDeck({}).token).toBe('')
+    })
+    test('token rotation alone is NOT a deck change (no pointless reloads)', () => {
+        const deck = { active: true, slides: [{ url: '/a' }], token: 't1' }
+        expect(P.deckChanged(deck, { ...deck, token: 't2' })).toBe(false)
+    })
+})
+
 describe('addCacheBuster', () => {
     test('appends ?_odm=n to a bare URL', () => {
         expect(P.addCacheBuster('/sys_user_list.do', 3)).toBe('/sys_user_list.do?_odm=3')

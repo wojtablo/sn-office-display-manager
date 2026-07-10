@@ -1,8 +1,11 @@
 # ODM Runbook — Display Setup & Verification
 
-> App: Office Display Manager (`x_804244_odm`) · Player base URL:
-> `https://<instance>/api/x_804244_odm/player` — **no trailing slash** (a trailing
-> slash returns 400 by platform routing).
+> App: Office Display Manager (`x_804244_odm`)
+> **Browser/display URL:** `https://<instance>/x_804244_odm_player.do?screen=<screen>`
+> (bootstrap page — handles login redirect and session tokens automatically).
+> The raw REST routes under `/api/x_804244_odm/player` are for API clients with
+> basic auth/tokens; opening them cookie-only in a browser yields 401 by platform
+> design (X-UserToken requirement).
 
 ## 1. Setting up a new screen
 
@@ -22,8 +25,9 @@
 3. **Launch on the display** (once, via Bomgar):
    1. Open the browser on the display machine, log into the instance as the
       technical account.
-   2. Navigate to `https://<instance>/api/x_804244_odm/player`
-      (or `/api/x_804244_odm/player/<screen-user-name>`).
+   2. Navigate to `https://<instance>/x_804244_odm_player.do?screen=<screen-user-name>`
+      (omit `?screen=` to use the logged-in account). Not signed in? The platform
+      redirects to login and back automatically.
    3. Full-screen it (F11) — better: launch Chrome with `--kiosk <url>`.
    4. Disconnect Bomgar. Done — the loop runs; edits from your desk apply within
       one refresh interval.
@@ -40,8 +44,8 @@ manager — can see exactly what a screen is playing without touching it: log in
 instance and open that screen's player URL in a browser tab:
 
 ```
-/api/x_804244_odm/player/<screen-user-name>          — the live view (loop, meteor bar)
-/api/x_804244_odm/player/<screen-user-name>/deck     — the deck as JSON
+/x_804244_odm_player.do?screen=<screen-user-name>       — the live view (loop, meteor bar)
+/api/x_804244_odm/player/<screen-user-name>/deck        — deck JSON (API clients / basic auth)
 ```
 
 Display accounts cannot do the reverse — they only ever read their own deck.
@@ -62,7 +66,7 @@ Display accounts cannot do the reverse — they only ever read their own deck.
 
 | Symptom | Cause / fix |
 |---|---|
-| Browser shows JSON `401` | Session expired or not logged in — log in first, then open the player URL |
+| Browser shows JSON `401` | You opened the raw `/api/...` URL — use `/x_804244_odm_player.do?screen=...` instead (or the session expired: it redirects to login) |
 | `400 Bad Request` | Trailing slash on the URL — remove it |
 | Idle card "No active slideshow" | Nothing assigned to this account, `Active` unchecked, or the account can't read the deck (check role + assignment) |
 | Idle card on `/player/<screen>` | `<screen>` misspelled (must equal the tech account `user_name`), or the calling session lacks read rights on that deck |

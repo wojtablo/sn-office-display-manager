@@ -150,3 +150,17 @@ describe('servePlayerHtml', () => {
         expect(res.state.body).toContain('<!DOCTYPE html>')
     })
 })
+
+describe('session token (platform requires X-UserToken for cookie-based REST polling)', () => {
+    test('logged-in player HTML carries the session token for polling', () => {
+        const res = fakeResponse()
+        servePlayerHtml(fakeRequest({ screen: 'svc.display.sd-room1' }), res)
+        expect(res.state.status).toBe(200)
+        expect(res.state.body).toContain('"token":"fake-session-token-123"')
+    })
+    test('deck JSON carries the session token too (keeps the shell token fresh)', () => {
+        const res = fakeResponse()
+        serveDeckJson(fakeRequest({ screen: 'svc.display.sd-room1' }), res)
+        expect(JSON.parse(res.state.body).token).toBe('fake-session-token-123')
+    })
+})

@@ -30,7 +30,7 @@ accounts, the account name *is* the screen identity — the slideshow list answe
 |---|---|---|
 | 1. Setup (once per screen) | Admin | Create technical account per display, grant `x_804244_odm.display`, note the account↔screen mapping via naming convention |
 | 2. Authoring | Manager (normal account) | Create **Slideshow**: fill `links` (comma-separated URLs), set `slide_duration` and working hours, set `assigned_account` to the screen's technical account, check `active` |
-| 3. Launch (once per screen) | Anyone at the screen, via Bomgar | Log into ServiceNow as the technical account, open `/api/x_804244_odm/player/<screen>` → the loop starts immediately, disconnect Bomgar |
+| 3. Launch (once per screen) | Anyone at the screen, via Bomgar | Log into ServiceNow as the technical account, open **`/x_804244_odm_player.do?screen=<screen>`** (bootstrap page → player takes over the tab) → the loop starts, disconnect Bomgar |
 | 4. Unattended run | Technical account (no human) | Player loops slides indefinitely; polling keeps the session alive and picks up content changes |
 | 5. Live update | Manager (normal account) | Edit the slideshow (links, duration, hours, assignment) from their desk; the display reflects changes within one `refresh_interval`. Kill switch: uncheck `active` → player shows idle screen |
 
@@ -184,6 +184,17 @@ The screen's URL is **permanent** — swapping what a screen shows = editing
 `assigned_account`/`links` from the manager's desk; the display is never touched.
 A manager can also open any screen's URL in their own browser to see that screen's deck.
 
+**Browser entry point (bootstrap page):** the platform rejects cookie-only REST calls
+without an `X-UserToken` header (CSRF protection), and address bars can't send
+headers — so browsers enter via a minimal classic UI Page,
+**`/x_804244_odm_player.do?screen=<screen>`**, which owns the session's `g_ck`,
+fetches the player HTML from the REST route with that token, and `document.write`s
+it over the whole tab (escaping the Polaris shell via same-origin `window.top`).
+Anonymous visitors get the platform login redirect for free. The deck JSON carries
+the session token so the player's polling stays authenticated; token failures degrade
+polling only, never deck resolution. The REST routes remain the API; the UI Page is a
+~30-line shim, not a rendering surface (no Jelly interpolation).
+
 **Injection safety:** deck is `JSON.stringify`-ed and `</script>`-escaped
 (`<\/script>`) before token replacement — `links` content is manager-supplied and must
 not be able to break out of the script context.
@@ -327,6 +338,7 @@ Written down so nobody discovers them in production:
 - 2026-07-10 — Self-service ACL model adopted (any `snc_internal` user authors own decks), then **superseded same day** (below).
 - 2026-07-10 — **Supersedes self-service:** role-gated model — `display` reads only its assigned deck (no create/write), `manager`/`admin` full access, role-less users have no access; REST routes require an app role. `display` role kept with real purpose (module visibility + read-own ACL) — former Open Question 2 resolved.
 - 2026-07-10 — Application menu "Office Display Manager": module **My slideshows** (visible to `manager` + `display`, filtered `created by me OR assigned to me`) and **All slides** (visible to `x_804244_odm.admin` only — managers administer all records via list filters).
+- 2026-07-10 — **Browser auth finding + bootstrap page:** the platform refuses cookie-only REST calls without `X-UserToken` (verified: real session → 401; +token → 200), and `authentication:false` routes don't bind the session user at all (verified: empty user context). Fix: classic UI Page bootstrap `/x_804244_odm_player.do?screen=...` fetches the player with `g_ck` and takes over the tab (`window.top` write escapes the Polaris shell). Deck JSON carries the session token for authenticated polling. "Zero platform UI" relaxed to "one ~30-line bootstrap shim; player itself stays template-as-code via REST."
 - 2026-07-10 — **Admin preview guarantee made explicit:** users with the admin role (app or platform) can preview any screen's slideshow via its player/deck URLs. No code change — satisfied by role containment (`admin` ⊃ `manager` read-all) + `adminOverrides` on ACLs; verified live (platform-admin account fetched another screen's deck).
 - 2026-07-10 — **Implementation finding:** the Australia platform cannot resolve extensionless module-to-module imports in server modules (`ModuleResolutionException`). The deployed REST handler is therefore a **generated self-contained module** (`player-routes.ts`, emitted by `build-template.mjs` from `deck.ts` + `handlers.src.ts` + the template). Fluent→module imports are unaffected. Sources stay separate and jest-covered.
 - 2026-07-10 — **Alternative considered and parked:** SDK 4.x native front-end apps (React/BYOF bundled as static UX assets behind a UiPage endpoint, no Jelly issues). Rejected for MVP: hash-routing only (no `/player/{screen}` path params), no server-side deck injection into static assets, asset size bound to attachment-size property. Documented Plan B if REST-served HTML hits an obstacle; deck JSON route would be reused as-is. SDK pinned to 4.4+ (Australia-compatible).

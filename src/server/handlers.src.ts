@@ -89,12 +89,35 @@ function writeHtml(response: any, deck: Deck): void {
 }
 
 /**
+ * Session token for the template's authenticated polling (X-UserToken).
+ * Must NEVER throw — a token failure degrades polling, not the deck.
+ * Scoped API first (GlideSession), global variant as fallback.
+ */
+function sessionToken(): string {
+    try {
+        const t = gs.getSession().getSessionToken()
+        if (t) return String(t)
+    } catch (e) {
+        /* fall through */
+    }
+    try {
+        return String(gs.getSessionToken() || '')
+    } catch (e) {
+        return ''
+    }
+}
+
+/**
  * Serve the deck for `screen`, falling back to an idle-card deck on any Glide
  * failure — the player must never receive an error page or a stack trace.
+ * The session token rides along so the template can poll with X-UserToken
+ * (the platform rejects cookie-only REST calls without it).
  */
 function respondSafely(response: any, screen: string, write: (response: any, deck: Deck) => void): void {
     try {
-        write(response, deckForScreen(screen))
+        const deck = deckForScreen(screen)
+        deck.token = sessionToken()
+        write(response, deck)
     } catch (e) {
         try {
             write(response, buildDeck(screen || '', null))

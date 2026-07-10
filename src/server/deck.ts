@@ -16,6 +16,8 @@ export interface Deck {
     refreshInterval: number
     hoursStart: string
     hoursEnd: string
+    /** Session token (X-UserToken) for the template's authenticated polling; set by the handler. */
+    token: string
 }
 
 /**
@@ -72,6 +74,7 @@ export function buildDeck(screen: string, fields: SlideshowFields | null): Deck 
             refreshInterval: 60,
             hoursStart: '',
             hoursEnd: '',
+            token: '',
         }
     }
     return {
@@ -83,6 +86,7 @@ export function buildDeck(screen: string, fields: SlideshowFields | null): Deck 
         refreshInterval: toPositiveInt(fields.refresh_interval, 60, 10),
         hoursStart: fields.hours_start || '',
         hoursEnd: fields.hours_end || '',
+        token: '',
     }
 }
 

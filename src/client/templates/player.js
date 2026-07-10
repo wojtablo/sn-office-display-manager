@@ -73,6 +73,7 @@
             refreshInterval: refresh,
             hoursStart: typeof d.hoursStart === 'string' ? d.hoursStart : '',
             hoursEnd: typeof d.hoursEnd === 'string' ? d.hoursEnd : '',
+            token: typeof d.token === 'string' ? d.token : '',
         }
     }
 

@@ -327,6 +327,13 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_page'
+                        id: 'aed8bde9ff2d4b8d8021d4728d72731f'
+                        key: {
+                            endpoint: 'x_804244_odm_player.do'
+                        }
+                    },
+                    {
                         table: 'sys_dictionary'
                         id: 'b10d34d693f24684853905ae233b428c'
                         key: {

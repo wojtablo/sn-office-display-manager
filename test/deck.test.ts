@@ -75,6 +75,7 @@ describe('buildDeck', () => {
             refreshInterval: 45,
             hoursStart: '07:00',
             hoursEnd: '19:00',
+            token: '',
         })
     })
     test('active "false" string maps to false', () => {

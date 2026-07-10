@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<style>html,body{margin:0;height:100%;background:#000;color:#9aa0a6;font-family:sans-serif}</style>
+<div style="display:grid;place-items:center;height:100vh;text-align:center">
+<div><h1 style="color:#e8eaed">Office Display Manager</h1><p id="odm-msg">Loading player…</p></div>
+</div>
+<script>
+//<![CDATA[
+(function () {
+    'use strict'
+    function fail(message) {
+        var el = document.getElementById('odm-msg')
+        if (el) el.textContent = message + ' — retrying in 30 s'
+        setTimeout(boot, 30000)
+    }
+    function boot() {
+        try {
+            var m = /[?&]screen=([^&]*)/.exec(window.location.search)
+            var screen = m ? decodeURIComponent(m[1]) : ''
+            var url = '/api/x_804244_odm/player' + (screen ? '/' + encodeURIComponent(screen) : '')
+            fetch(url, { headers: { 'X-UserToken': window.g_ck || '' } })
+                .then(function (r) { if (!r.ok) { throw new Error('HTTP ' + r.status) } return r.text() })
+                .then(function (html) {
+                    // Polaris wraps .do pages in a shell iframe; write into the
+                    // top document (same origin) so the player owns the whole tab
+                    var doc = document
+                    try {
+                        if (window.top && window.top !== window.self && window.top.document) {
+                            doc = window.top.document
+                        }
+                    } catch (e) { /* cross-origin top? stay local */ }
+                    doc.open(); doc.write(html); doc.close()
+                })
+                .catch(function (e) { fail('Cannot load player (' + e.message + ')') })
+        } catch (e) { fail('Cannot load player') }
+    }
+    boot()
+})()
+//]]>
+</script>
+</j:jelly>
