@@ -33,6 +33,19 @@
 - Browser autostart on boot with the player URL (`--kiosk --noerrdialogs --disable-session-crashed-bubble`).
 - Auto-login of the OS user after power loss.
 
+## 1a. Previewing a screen (admins & managers)
+
+Anyone with the admin role (app `x_804244_odm.admin` or platform admin) — and any
+manager — can see exactly what a screen is playing without touching it: log into the
+instance and open that screen's player URL in a browser tab:
+
+```
+/api/x_804244_odm/player/<screen-user-name>          — the live view (loop, meteor bar)
+/api/x_804244_odm/player/<screen-user-name>/deck     — the deck as JSON
+```
+
+Display accounts cannot do the reverse — they only ever read their own deck.
+
 ## 2. Content guidance
 
 - **Same-instance URLs always work** (dashboards, reports, lists — same origin).

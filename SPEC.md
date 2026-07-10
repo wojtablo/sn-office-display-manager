@@ -15,7 +15,7 @@ account.
 |---|---|---|---|
 | Manager (e.g. Service Desk lead) | Normal account | `x_804244_odm.manager` | Author slideshows (links, duration, working hours); change what a display shows without touching it; works from the "My slideshows" module (can administer all records via list filters) |
 | Display (kiosk) | Technical account, one per physical screen | `x_804244_odm.display` | Log in once (via Bomgar), open player URL, run an infinite slide loop unattended; sees "My slideshows" (its assigned deck) |
-| App admin | Normal account | `x_804244_odm.admin` (contains `manager`) | Delegated app administration; sole access to the "All slides" module |
+| App admin | Normal account | `x_804244_odm.admin` (contains `manager`) | Delegated app administration; sole access to the "All slides" module; **preview any screen's slideshow** by opening its player URL (`/player/<screen>`) or deck JSON |
 
 Employees without an app role have **no access** — no module, no records, 401/idle on the REST routes.
 
@@ -152,7 +152,7 @@ No slide table, no template table (template is code — see Rendering & API).
 | write / delete | ✖ | all records (flat, no ownership conditions) | all records |
 
 - Users without an app role: **no access** — no module, no records, idle card on the REST routes.
-- `x_804244_odm.admin` → contains `manager`; sole role that sees the "All slides" module.
+- `x_804244_odm.admin` → contains `manager`; sole role that sees the "All slides" module. **Preview guarantee:** any admin (app admin via contained `manager` read-all, platform admin via `adminOverrides`) can open any screen's `/player/{screen}` URL and see exactly what that display is playing.
 - `x_804244_odm.display` → read-only on its own assigned deck + "My slideshows" module visibility (this resolves former Open Question 2: **kept, with purpose**).
 - **REST routes require an app role** (display/manager/admin); record access enforced by the table ACLs — calling another screen's URL without read rights yields the idle card, never data.
 
@@ -327,5 +327,6 @@ Written down so nobody discovers them in production:
 - 2026-07-10 — Self-service ACL model adopted (any `snc_internal` user authors own decks), then **superseded same day** (below).
 - 2026-07-10 — **Supersedes self-service:** role-gated model — `display` reads only its assigned deck (no create/write), `manager`/`admin` full access, role-less users have no access; REST routes require an app role. `display` role kept with real purpose (module visibility + read-own ACL) — former Open Question 2 resolved.
 - 2026-07-10 — Application menu "Office Display Manager": module **My slideshows** (visible to `manager` + `display`, filtered `created by me OR assigned to me`) and **All slides** (visible to `x_804244_odm.admin` only — managers administer all records via list filters).
+- 2026-07-10 — **Admin preview guarantee made explicit:** users with the admin role (app or platform) can preview any screen's slideshow via its player/deck URLs. No code change — satisfied by role containment (`admin` ⊃ `manager` read-all) + `adminOverrides` on ACLs; verified live (platform-admin account fetched another screen's deck).
 - 2026-07-10 — **Implementation finding:** the Australia platform cannot resolve extensionless module-to-module imports in server modules (`ModuleResolutionException`). The deployed REST handler is therefore a **generated self-contained module** (`player-routes.ts`, emitted by `build-template.mjs` from `deck.ts` + `handlers.src.ts` + the template). Fluent→module imports are unaffected. Sources stay separate and jest-covered.
 - 2026-07-10 — **Alternative considered and parked:** SDK 4.x native front-end apps (React/BYOF bundled as static UX assets behind a UiPage endpoint, no Jelly issues). Rejected for MVP: hash-routing only (no `/player/{screen}` path params), no server-side deck injection into static assets, asset size bound to attachment-size property. Documented Plan B if REST-served HTML hits an obstacle; deck JSON route would be reused as-is. SDK pinned to 4.4+ (Australia-compatible).
