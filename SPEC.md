@@ -184,17 +184,18 @@ platform UI runtime.** The template is code: developed and tested locally agains
 mock deck, compiled into a Script Include string constant by the build, deployed via
 SDK. Changing the template = git commit + `now-sdk install`, not a form edit.
 
-**Routes (API namespace `x_804244_odm`):**
+**Two surfaces — the HTML page and one REST route:**
 
-| Route | Returns | Behavior |
+| Surface | Returns | Behavior |
 |---|---|---|
-| `GET /api/x_804244_odm/player/{screen}` | `text/html` | `{screen}` = technical account `user_name` (e.g. `svc.display.sd-room1`) → resolve active slideshow via `assigned_account` → parse `links` into deck JSON → inject into template at `__ODM_DECK__` token → stream |
-| `GET /api/x_804244_odm/player` | `text/html` | no param → resolve by **logged-in** user (kiosk shorthand; also how a manager previews a deck assigned to themselves) |
-| `GET /api/x_804244_odm/player/{screen}/deck` | `application/json` | deck only — the template polls this every `refresh_interval` |
+| `GET /x_804244_odm_player.do?screen=<user_name>` (direct UI page) | `text/html` | The browser entry point. Server-renders the player in-process (`renderPlayerHtml`): resolve active slideshow via `assigned_account`, parse `links` into deck JSON, inject into the template at `__ODM_DECK__`, stream. No `?screen=` → logged-in user. Login redirect is free for anonymous. |
+| `GET /api/x_804244_odm/player/deck?screen=<user_name>` (Scripted REST) | `application/json` | The **only** REST route — the deck the running player polls every `refresh_interval`. |
+
+That's the whole API surface: one HTML page + one JSON route. The HTML is **not**
+served over REST (an earlier design did; it was dead once the `.do` page existed).
 
 The screen's URL is **permanent** — swapping what a screen shows = editing
-`assigned_account`/`links` from the manager's desk; the display is never touched.
-A manager can also open any screen's URL in their own browser to see that screen's deck.
+`assigned_account`/`links` from your desk; the display is never touched.
 
 **Browser entry point (bootstrap page):** the platform rejects cookie-only REST calls
 without an `X-UserToken` header (CSRF protection), and address bars can't send
