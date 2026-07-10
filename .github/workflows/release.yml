@@ -1,0 +1,38 @@
+# Release — turns a pushed `vX.Y.Z` tag into a GitHub Release.
+# The deploy already happened locally (npm run release); this only records the
+# release on GitHub. No instance credentials are needed here.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # required to create the Release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so release notes can diff from the last tag
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Re-run validation on the exact tagged commit before publishing.
+      - run: npm test
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true # auto changelog from commits since the last tag
+          # To also attach the installable package, build it here and add:
+          #   files: dist/**/*.zip
+          # Note: `now-sdk build && now-sdk pack` may require instance-downloaded
+          # types; enable only if the build runs offline in CI.
