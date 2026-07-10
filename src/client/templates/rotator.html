@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ODM Player</title>
+<style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+    #frame {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        border: 0; background: #000;
+    }
+    /* ---- meteor progress bar (bottom) ---- */
+    #meteor { position: fixed; left: 0; right: 0; bottom: 0; height: 6px; pointer-events: none; z-index: 20; }
+    #meteor .trail {
+        position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+        background: linear-gradient(90deg, rgba(224,32,32,0) 0%, rgba(224,32,32,.35) 55%, #e02020 100%);
+        border-radius: 0 3px 3px 0;
+    }
+    #meteor .head {
+        position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow:
+            0 0 4px 2px #ff5a5a,
+            0 0 12px 6px rgba(224, 32, 32, .8),
+            0 0 28px 12px rgba(224, 32, 32, .45);
+    }
+    /* ---- overlays (standby / idle) ---- */
+    .overlay {
+        position: absolute; inset: 0; z-index: 10; display: none;
+        background: #000; color: #9aa0a6;
+        font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        text-align: center;
+    }
+    .overlay.visible { display: grid; place-items: center; }
+    .overlay .big { font-size: 5vw; color: #e8eaed; margin: 0 0 .4em; }
+    .overlay .small { font-size: 1.6vw; margin: 0; }
+    #standby .clock { font-size: 8vw; color: #5f6368; margin: 0 0 .2em; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<iframe id="frame" title="slide" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+
+<div id="standby" class="overlay">
+    <div>
+        <p class="clock">--:--</p>
+        <p class="small" id="standby-info">Outside working hours</p>
+    </div>
+</div>
+
+<div id="idle" class="overlay">
+    <div>
+        <p class="big">Office Display Manager</p>
+        <p class="small" id="idle-info">No active slideshow is assigned to this screen.</p>
+    </div>
+</div>
+
+<div id="meteor" aria-hidden="true"><div class="trail"></div><div class="head"></div></div>
+
+<script src="player.js"></script>
+<script>
+/* Deck injection point. The server replaces the quoted token with the escaped
+   deck JSON object. When the token survives (local file:// dev), the shell
+   falls back to the mock deck below. */
+window.__ODM_DECK__ = "__ODM_DECK_JSON__";
+
+/* Local development mock — used only when the token was not replaced. */
+window.__ODM_MOCK_DECK__ = {
+    screen: 'local.mock',
+    slideshow: 'Local mock deck',
+    active: true,
+    slides: [
+        { url: 'https://www.wikipedia.org' },
+        { url: 'https://example.com' },
+        { url: 'https://this-will-refuse-iframing.google.com' }
+    ],
+    slideDuration: 8,
+    refreshInterval: 60,
+    hoursStart: '00:01',
+    hoursEnd: '23:59'
+};
+</script>
+<script>
+(function () {
+    'use strict'
+    var P = window.ODMPlayer
+
+    var frame = document.getElementById('frame')
+    var standby = document.getElementById('standby')
+    var standbyClock = standby.querySelector('.clock')
+    var standbyInfo = document.getElementById('standby-info')
+    var idle = document.getElementById('idle')
+    var idleInfo = document.getElementById('idle-info')
+    var trail = document.querySelector('#meteor .trail')
+    var head = document.querySelector('#meteor .head')
+    var meteor = document.getElementById('meteor')
+
+    var deck = P.normalizeDeck(
+        typeof window.__ODM_DECK__ === 'object' && window.__ODM_DECK__ !== null
+            ? window.__ODM_DECK__
+            : window.__ODM_MOCK_DECK__
+    )
+
+    var index = 0
+    var cycle = 0
+    var slideStartedAt = 0
+    var slideTimer = null
+    var inStandby = false
+
+    function addCacheBuster(url, n) {
+        try {
+            return url + (url.indexOf('?') === -1 ? '?' : '&') + '_odm=' + n
+        } catch (e) { return url }
+    }
+
+    function setOverlays(state) {
+        // state: 'play' | 'standby' | 'idle'
+        standby.className = state === 'standby' ? 'overlay visible' : 'overlay'
+        idle.className = state === 'idle' ? 'overlay visible' : 'overlay'
+        meteor.style.display = state === 'play' ? 'block' : 'none'
+        if (state !== 'play') {
+            try { frame.src = 'about:blank' } catch (e) { /* keep running */ }
+        }
+    }
+
+    function showSlide(i) {
+        try {
+            cycle++
+            frame.src = addCacheBuster(deck.slides[i].url, cycle)
+        } catch (e) { /* a broken slide must never stall the loop */ }
+        slideStartedAt = Date.now()
+        if (slideTimer) clearTimeout(slideTimer)
+        slideTimer = setTimeout(function () {
+            index = P.nextIndex(index, deck.slides.length)
+            tick()
+        }, deck.slideDuration * 1000)
+    }
+
+    function tick() {
+        try {
+            var within = P.isWithinHours(P.minutesOfDay(new Date()), deck.hoursStart, deck.hoursEnd)
+            if (!P.isPlayable(deck)) {
+                if (slideTimer) clearTimeout(slideTimer)
+                idleInfo.textContent = deck.screen
+                    ? 'No active slideshow is assigned to "' + deck.screen + '".'
+                    : 'No active slideshow is assigned to this screen.'
+                setOverlays('idle')
+                inStandby = false
+                return
+            }
+            if (!within) {
+                if (slideTimer) clearTimeout(slideTimer)
+                standbyInfo.textContent = (deck.screen ? deck.screen + ' — ' : '') +
+                    'resumes at ' + (deck.hoursStart || '--:--')
+                setOverlays('standby')
+                inStandby = true
+                return
+            }
+            if (inStandby || frame.src === '' || frame.src === 'about:blank') {
+                inStandby = false
+                setOverlays('play')
+                showSlide(index)
+                return
+            }
+            setOverlays('play')
+        } catch (e) { /* never die */ }
+    }
+
+    /* meteor bar animation */
+    function animateBar() {
+        try {
+            var pct = 0
+            if (slideStartedAt && deck.slideDuration > 0 && !inStandby && P.isPlayable(deck)) {
+                pct = Math.min(100, ((Date.now() - slideStartedAt) / (deck.slideDuration * 1000)) * 100)
+            }
+            trail.style.width = pct + '%'
+            head.style.left = pct + '%'
+        } catch (e) { /* cosmetic only */ }
+        window.requestAnimationFrame(animateBar)
+    }
+
+    /* standby clock */
+    setInterval(function () {
+        try {
+            var now = new Date()
+            standbyClock.textContent =
+                ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)
+        } catch (e) { /* cosmetic only */ }
+    }, 1000)
+
+    /* working-hours watchdog: re-evaluate every 30 s */
+    setInterval(function () {
+        try {
+            var within = P.isWithinHours(P.minutesOfDay(new Date()), deck.hoursStart, deck.hoursEnd)
+            if (within === inStandby) tick() // state must flip
+        } catch (e) { /* never die */ }
+    }, 30000)
+
+    /* deck polling: live updates + session keep-alive; also the idle-retry path */
+    function poll() {
+        try {
+            var url = window.location.pathname.replace(/\/$/, '') + '/deck'
+            if (window.location.protocol === 'file:') return // local dev: no server
+            fetch(url, { headers: { Accept: 'application/json' } })
+                .then(function (r) { return r.ok ? r.json() : null })
+                .then(function (fresh) {
+                    if (!fresh) return
+                    if (P.deckChanged(deck, fresh)) {
+                        deck = P.normalizeDeck(fresh)
+                        index = 0
+                        inStandby = false
+                        tick()
+                    }
+                })
+                .catch(function () { /* transient network errors are fine */ })
+        } catch (e) { /* never die */ }
+    }
+    setInterval(poll, Math.max(10, deck.refreshInterval) * 1000)
+
+    /* boot */
+    tick()
+    window.requestAnimationFrame(animateBar)
+})()
+</script>
+</body>
+</html>
