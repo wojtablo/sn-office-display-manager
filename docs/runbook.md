@@ -98,10 +98,10 @@ Executed 2026-07-10 against dev395356 (Australia patch3) — all automated items
 
 | Object | Value |
 |---|---|
-| Slideshows | `E2E Test Wall` (assigned: claude), `SD Test Wall` (assigned: svc.display.test1) |
+| Slideshows | `E2E Test Wall` (claude) · `SD Test Wall` (svc.display.test1, 10 s) · `NOC Wall - Incidents` (svc.display.test2, 3 same-instance lists incl. a `%2C`-encoded query, 20 s, 07–19) · `Lobby Welcome` (svc.display.lobby, external pages + a `#`-disabled entry, 45 s, 06–22) · `Weekend Draft` (svc.display.test2, **inactive** — activating it demonstrates the uniqueness rule) |
 | Test manager | `odm.test.manager` (role `x_804244_odm.manager`) |
-| Test display | `svc.display.test1` (role `x_804244_odm.display`) |
-| Player URLs | `/api/x_804244_odm/player/svc.display.test1` · `/api/x_804244_odm/player/deck?screen=svc.display.test1` |
+| Test displays | `svc.display.test1`, `svc.display.test2`, `svc.display.lobby` (role `x_804244_odm.display`) |
+| Player URLs | `/api/x_804244_odm/player/svc.display.test2` (NOC) · `/player/svc.display.lobby` (signage) · `/player/svc.display.test1` · deck JSON: append `/deck` |
 
 Passwords for test accounts were set at creation on 2026-07-10; rotate or delete
 these fixtures before any real rollout.
