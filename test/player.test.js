@@ -85,6 +85,44 @@ describe('normalizeDeck', () => {
     })
 })
 
+describe('resolveState', () => {
+    const at = (hhmm) => P.parseHHMM(hhmm)
+    const deck = {
+        active: true,
+        slides: [{ url: '/a' }],
+        hoursStart: '07:00',
+        hoursEnd: '19:00',
+    }
+    test('playable deck within hours -> play', () => {
+        expect(P.resolveState(P.normalizeDeck(deck), at('12:00'))).toBe('play')
+    })
+    test('playable deck outside hours -> standby', () => {
+        expect(P.resolveState(P.normalizeDeck(deck), at('20:00'))).toBe('standby')
+    })
+    test('empty deck -> idle regardless of hours', () => {
+        expect(P.resolveState(P.normalizeDeck({ ...deck, slides: [] }), at('12:00'))).toBe('idle')
+    })
+    test('inactive deck -> idle, idle wins over standby', () => {
+        expect(P.resolveState(P.normalizeDeck({ ...deck, active: false }), at('20:00'))).toBe('idle')
+    })
+    test('invalid hours fail open -> play', () => {
+        expect(P.resolveState(P.normalizeDeck({ ...deck, hoursStart: 'zz' }), at('03:00'))).toBe('play')
+    })
+})
+
+describe('fingerprint has no separator-collision ambiguity', () => {
+    test('two slides /a,/b differ from one slide /a/b', () => {
+        const two = { active: true, slides: [{ url: '/a' }, { url: '/b' }] }
+        const one = { active: true, slides: [{ url: '/a/b' }] }
+        expect(P.deckChanged(two, one)).toBe(true)
+    })
+    test('adjacent numeric fields cannot collide (12|3 vs 1|23)', () => {
+        const a = { active: true, slides: [{ url: '/x' }], slideDuration: 12, refreshInterval: 360 }
+        const b = { active: true, slides: [{ url: '/x' }], slideDuration: 123, refreshInterval: 60 }
+        expect(P.deckChanged(a, b)).toBe(true)
+    })
+})
+
 describe('addCacheBuster', () => {
     test('appends ?_odm=n to a bare URL', () => {
         expect(P.addCacheBuster('/sys_user_list.do', 3)).toBe('/sys_user_list.do?_odm=3')

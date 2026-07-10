@@ -103,6 +103,18 @@
     }
 
     /**
+     * Decide what the player should be doing right now.
+     * Owns the precedence: idle (no playable deck) > standby (outside hours) > play.
+     * Pure — the shell just executes the returned state.
+     * @returns {'play'|'standby'|'idle'}
+     */
+    function resolveState(deck, nowMinutes) {
+        if (!isPlayable(deck)) return 'idle'
+        if (!isWithinHours(nowMinutes, deck.hoursStart, deck.hoursEnd)) return 'standby'
+        return 'play'
+    }
+
+    /**
      * Append a per-cycle cache-buster so re-showing the same URL reloads the
      * iframe (single-slide decks must not show stale dashboards all day).
      * Never throws; non-strings pass through untouched.
@@ -121,6 +133,7 @@
         isPlayable: isPlayable,
         fingerprint: fingerprint,
         deckChanged: deckChanged,
+        resolveState: resolveState,
         addCacheBuster: addCacheBuster,
     }
 

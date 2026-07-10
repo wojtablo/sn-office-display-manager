@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-<iframe id="frame" title="slide" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+<iframe id="frame" title="slide" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
 
 <div id="standby" class="overlay">
     <div>
@@ -106,18 +106,18 @@ window.__ODM_MOCK_DECK__ = {
     var cycle = 0
     var slideStartedAt = 0
     var slideTimer = null
-    var inStandby = false
+    var state = 'boot' // 'boot' | 'play' | 'standby' | 'idle' — owned here, never sniffed from the DOM
 
-    function setOverlays(state) {
-        // state: 'play' | 'standby' | 'idle'
-        standby.className = state === 'standby' ? 'overlay visible' : 'overlay'
-        idle.className = state === 'idle' ? 'overlay visible' : 'overlay'
-        meteor.style.display = state === 'play' ? 'block' : 'none'
-        if (state !== 'play') {
+    function setOverlays(next) {
+        standby.className = next === 'standby' ? 'overlay visible' : 'overlay'
+        idle.className = next === 'idle' ? 'overlay visible' : 'overlay'
+        meteor.style.display = next === 'play' ? 'block' : 'none'
+        if (next !== 'play') {
             try { frame.src = 'about:blank' } catch (e) { /* keep running */ }
         }
     }
 
+    /** Show slide `i` and re-arm the advance timer. Only ever called in 'play'. */
     function showSlide(i) {
         try {
             cycle++
@@ -125,39 +125,42 @@ window.__ODM_MOCK_DECK__ = {
         } catch (e) { /* a broken slide must never stall the loop */ }
         slideStartedAt = Date.now()
         if (slideTimer) clearTimeout(slideTimer)
-        slideTimer = setTimeout(function () {
-            index = P.nextIndex(index, deck.slides.length)
-            tick()
-        }, deck.slideDuration * 1000)
+        slideTimer = setTimeout(advance, deck.slideDuration * 1000)
     }
 
-    function tick() {
+    /** Timer path: next slide, then re-evaluate state (hours may have flipped mid-slide). */
+    function advance() {
+        index = P.nextIndex(index, deck.slides.length)
+        applyState(true)
+    }
+
+    /**
+     * Reconcile the shell with resolveState(). `forceShow` re-renders the
+     * current slide even if we were already playing (timer advance, deck swap);
+     * without it, watchdog/poll calls leave an in-progress slide alone.
+     */
+    function applyState(forceShow) {
         try {
-            var within = P.isWithinHours(P.minutesOfDay(new Date()), deck.hoursStart, deck.hoursEnd)
-            if (!P.isPlayable(deck)) {
+            var next = P.resolveState(deck, P.minutesOfDay(new Date()))
+            if (next !== 'play') {
                 if (slideTimer) clearTimeout(slideTimer)
-                idleInfo.textContent = deck.screen
-                    ? 'No active slideshow is assigned to "' + deck.screen + '".'
-                    : 'No active slideshow is assigned to this screen.'
-                setOverlays('idle')
-                inStandby = false
+                slideTimer = null
+                if (next === 'idle') {
+                    idleInfo.textContent = deck.screen
+                        ? 'No active slideshow is assigned to "' + deck.screen + '".'
+                        : 'No active slideshow is assigned to this screen.'
+                } else {
+                    standbyInfo.textContent = (deck.screen ? deck.screen + ' — ' : '') +
+                        'resumes at ' + (deck.hoursStart || '--:--')
+                }
+                setOverlays(next)
+                state = next
                 return
             }
-            if (!within) {
-                if (slideTimer) clearTimeout(slideTimer)
-                standbyInfo.textContent = (deck.screen ? deck.screen + ' — ' : '') +
-                    'resumes at ' + (deck.hoursStart || '--:--')
-                setOverlays('standby')
-                inStandby = true
-                return
-            }
-            if (inStandby || frame.src === '' || frame.src === 'about:blank') {
-                inStandby = false
-                setOverlays('play')
-                showSlide(index)
-                return
-            }
+            var wasPlaying = state === 'play'
+            state = 'play'
             setOverlays('play')
+            if (!wasPlaying || forceShow) showSlide(index)
         } catch (e) { /* never die */ }
     }
 
@@ -165,7 +168,7 @@ window.__ODM_MOCK_DECK__ = {
     function animateBar() {
         try {
             var pct = 0
-            if (slideStartedAt && deck.slideDuration > 0 && !inStandby && P.isPlayable(deck)) {
+            if (slideStartedAt && deck.slideDuration > 0 && state === 'play') {
                 pct = Math.min(100, ((Date.now() - slideStartedAt) / (deck.slideDuration * 1000)) * 100)
             }
             trail.style.width = pct + '%'
@@ -183,11 +186,10 @@ window.__ODM_MOCK_DECK__ = {
         } catch (e) { /* cosmetic only */ }
     }, 1000)
 
-    /* working-hours watchdog: re-evaluate every 30 s */
+    /* working-hours watchdog: re-evaluate every 30 s (no-op while state is unchanged) */
     setInterval(function () {
         try {
-            var within = P.isWithinHours(P.minutesOfDay(new Date()), deck.hoursStart, deck.hoursEnd)
-            if (within === inStandby) tick() // state must flip
+            if (P.resolveState(deck, P.minutesOfDay(new Date())) !== state) applyState(false)
         } catch (e) { /* never die */ }
     }, 30000)
 
@@ -205,8 +207,7 @@ window.__ODM_MOCK_DECK__ = {
                     if (P.deckChanged(deck, fresh)) {
                         deck = P.normalizeDeck(fresh)
                         index = 0
-                        inStandby = false
-                        tick()
+                        applyState(true) // restart from slide 0 of the new deck
                     }
                 })
                 .catch(function () { /* transient network errors are fine */ })
@@ -215,7 +216,7 @@ window.__ODM_MOCK_DECK__ = {
     setInterval(poll, Math.max(10, deck.refreshInterval) * 1000)
 
     /* boot */
-    tick()
+    applyState(true)
     window.requestAnimationFrame(animateBar)
 })()
 </script>
