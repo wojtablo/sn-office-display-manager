@@ -7,8 +7,10 @@
         "#now:*": "./@types/servicenow/fluent/*/index.js"
     },
     "scripts": {
-        "build": "node scripts/build-template.mjs && now-sdk build",
+        "docs": "node scripts/generate-docs.mjs",
+        "build": "node scripts/build-template.mjs && npm run docs && now-sdk build",
         "deploy": "now-sdk install",
+        "release": "node scripts/release.mjs",
         "transform": "now-sdk transform",
         "types": "now-sdk dependencies",
         "test": "jest",

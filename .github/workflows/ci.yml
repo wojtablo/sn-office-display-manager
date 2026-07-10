@@ -1,0 +1,42 @@
+# CI — keeps `main` releasable. Validation only; never touches the instance.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Tests
+        run: npm test
+
+      - name: Template + docs generation
+        run: |
+          node scripts/build-template.mjs
+          npm run docs
+
+      # Freshness gate: generated template sources and docs must be committed.
+      # If this fails, run `npm run build` locally and commit the result.
+      - name: Verify generated files are committed
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Generated files are out of date. Run 'npm run build' and commit the changes."
+            git --no-pager diff --stat
+            exit 1
+          fi
