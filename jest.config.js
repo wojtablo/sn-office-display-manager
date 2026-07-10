@@ -8,7 +8,7 @@ module.exports = {
     moduleNameMapper: {
         '^@servicenow/glide$': '<rootDir>/test/fakes/glide.js',
     },
-    testPathIgnorePatterns: ['/node_modules/', '/fakes/'],
+    testPathIgnorePatterns: ['/node_modules/', '/fakes/', '/e2e/'],
     collectCoverageFrom: [
         'src/client/templates/player.js',
         'src/server/deck.ts',
