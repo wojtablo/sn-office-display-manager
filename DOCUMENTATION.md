@@ -251,6 +251,7 @@ The table below is generated from the test sources.
 | `src/server/deck.ts` | ODM deck building — pure functions only (no Glide APIs) so jest can cover every branch. |
 | `src/server/handlers.src.ts` | ODM player route handlers (Scripted REST + direct UI page). |
 | `src/server/player-routes.ts` | _(generated)_ GENERATED FILE — do not edit by hand. |
+| `scripts/build-site.mjs` | build-site.mjs — render DOCUMENTATION.md into a self-contained static site. |
 | `scripts/build-template.mjs` | build-template.mjs — compile the player template into deployable server code. |
 | `scripts/generate-docs.mjs` | generate-docs.mjs — derive DOCUMENTATION.md (and README fact block) from source. |
 | `scripts/release.mjs` | release.mjs — one-command release for the ODM app. |
