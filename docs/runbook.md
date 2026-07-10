@@ -99,6 +99,25 @@ Executed 2026-07-10 against dev395356 (Australia patch3) — all automated items
       Question 1), not app code — check `glide.ui.session_timeout` and SSO
       exemptions for `svc.display.*` accounts.
 
+## 4a. End-to-end browser tests (Playwright)
+
+`npm run test:e2e` drives a real browser against a live instance and verifies the
+full stack: interactive login, the direct player page render, slide rotation, and
+the open-time access check (creator/admin play, stranger denied, public opens for
+all). Global setup creates a disposable service account + short-rotation slideshow
+and tears them down after.
+
+Required env (secrets never committed):
+
+```
+ODM_INSTANCE=https://<instance>
+ODM_ADMIN_USER=... ODM_ADMIN_PASS=...          # creates fixtures; creator+admin
+ODM_STRANGER_USER=... ODM_STRANGER_PASS=...    # neither creator nor service account
+```
+
+Run: `ODM_ADMIN_PASS=… ODM_STRANGER_PASS=… npm run test:e2e`.
+These are "large" tests — they need a live instance and are excluded from `npm test`.
+
 ## 5. Test fixtures on dev395356
 
 | Object | Value |

@@ -13,13 +13,16 @@
         "types": "now-sdk dependencies",
         "test": "jest",
         "test:coverage": "jest --coverage",
-        "dev:template": "open src/client/templates/rotator.html"
+        "dev:template": "open src/client/templates/rotator.html",
+        "test:e2e": "playwright test"
     },
     "devDependencies": {
+        "@playwright/test": "^1.61.1",
         "@servicenow/glide": "27.0.5",
         "@servicenow/sdk": "^4.8.1",
         "@types/jest": "^30.0.0",
         "jest": "^30.4.2",
+        "likec4": "^1.38.1",
         "ts-jest": "^29.4.11",
         "typescript": "^5.9.3"
     }
