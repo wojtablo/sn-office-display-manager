@@ -27,7 +27,7 @@ npm run deploy     # now-sdk install (uses .now/ credential alias)
 npm run release -- patch   # build, test, bump, deploy, tag, push
 ```
 
-See [DOCUMENTATION.md](./DOCUMENTATION.md) for the technical reference.
+See [docs/documentations.md](./docs/documentations.md) and [docs/tests.md](./docs/tests.md) for the technical reference — also published to GitHub Pages.
 
 ## Authentication
 

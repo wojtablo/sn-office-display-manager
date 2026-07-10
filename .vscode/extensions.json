@@ -1,5 +1,6 @@
 {
-    "recommendations": [
-        "servicenow.fluent-language-extension"
-    ]
+  "recommendations": [
+    "servicenow.fluent-language-extension",
+    "repowise-dev.repowise"
+  ]
 }
