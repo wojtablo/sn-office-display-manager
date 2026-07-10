@@ -94,8 +94,8 @@
             String(d.refreshInterval),
             d.hoursStart,
             d.hoursEnd,
-            urls.join(''),
-        ].join('')
+            urls.join('\u0001'),
+        ].join('\u0002')
     }
 
     /** True when a freshly polled deck differs from the current one. */

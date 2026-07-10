@@ -127,6 +127,26 @@ function respondSafely(response: any, screen: string, write: (response: any, dec
     }
 }
 
+/**
+ * Server-side render for the direct UI page (/x_804244_odm_player.do):
+ * the interactive session renders the player with the deck AND session token
+ * injected — the browser gets the finished document, nothing client-side.
+ * Never throws: any failure degrades to the idle-card deck.
+ */
+export function renderPlayerHtml(screen: string): string {
+    try {
+        const deck = deckForScreen(screen ? String(screen) : '')
+        deck.token = sessionToken()
+        return injectDeck(ROTATOR_HTML, deck)
+    } catch (e) {
+        try {
+            return injectDeck(ROTATOR_HTML, buildDeck(screen || '', null))
+        } catch (e2) {
+            return '<!DOCTYPE html><html><body>ODM: player unavailable</body></html>'
+        }
+    }
+}
+
 /** GET /player and GET /player/{screen} -> the player HTML document. */
 export function servePlayerHtml(request: any, response: any): void {
     const screen = pathParam(request, 'screen')

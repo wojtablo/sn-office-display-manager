@@ -2,7 +2,7 @@
  * Route-handler glue tests: handlers.src.ts against the fake Glide layer
  * (test/fakes/glide.js via jest moduleNameMapper).
  */
-import { servePlayerHtml, serveDeckJson } from '../src/server/handlers.src'
+import { servePlayerHtml, serveDeckJson, renderPlayerHtml } from '../src/server/handlers.src'
 const fake = require('../test/fakes/glide.js')
 
 function fakeRequest(pathParams: Record<string, string> = {}, queryParams: Record<string, unknown> = {}) {
@@ -148,6 +148,26 @@ describe('servePlayerHtml', () => {
         expect(res.state.status).toBe(200)
         expect(res.state.contentType).toBe('text/html')
         expect(res.state.body).toContain('<!DOCTYPE html>')
+    })
+})
+
+describe('renderPlayerHtml (direct UI page path)', () => {
+    test('returns the finished document with deck and token injected', () => {
+        const html = renderPlayerHtml('svc.display.sd-room1')
+        expect(html).toContain('<!DOCTYPE html>')
+        expect(html).not.toContain('"__ODM_DECK_JSON__"')
+        expect(html).toContain('"slideshow":"SD Wall"')
+        expect(html).toContain('"token":"fake-session-token-123"')
+    })
+    test('empty screen resolves the logged-in user', () => {
+        const html = renderPlayerHtml('')
+        expect(html).toContain('"screen":"claude"') // beforeEach signs in as claude
+    })
+    test('a Glide failure degrades to the idle deck, never throws', () => {
+        fake.__failNextQuery()
+        const html = renderPlayerHtml('svc.display.sd-room1')
+        expect(html).toContain('<!DOCTYPE html>')
+        expect(html).toContain('"slides":[]')
     })
 })
 

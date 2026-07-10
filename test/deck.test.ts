@@ -107,6 +107,10 @@ describe('escapeDeckJson / injectDeck', () => {
         // the only </script> tag left is the template's own closer
         expect(html.match(/<\/script>/g)).toHaveLength(1)
     })
+    test('CDATA terminator in manager content cannot break the CDATA wrapper', () => {
+        const evil = buildDeck('s', { name: 'x]]>y', links: '/a?q=]]>', active: 'true' })
+        expect(escapeDeckJson(evil)).not.toContain(']]>')
+    })
     test('missing token throws (build defect must be loud)', () => {
         expect(() => injectDeck('<html></html>', buildDeck('s', null))).toThrow(/injection token/)
     })

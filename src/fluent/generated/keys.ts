@@ -81,6 +81,10 @@ declare global {
                         table: 'sys_ws_operation'
                         id: 'd12d08df16984211bd35dcd51daec9ec'
                     }
+                    'si-odm-player-page': {
+                        table: 'sys_script_include'
+                        id: 'ef76b1eb4ae54dcb99172e525f684e73'
+                    }
                     src_server_deck_ts: {
                         table: 'sys_module'
                         id: '89021756f4574f0f9d6792a90cc1ec4d'

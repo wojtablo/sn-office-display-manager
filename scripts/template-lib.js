@@ -20,7 +20,9 @@ function inlinePlayerScript(rotatorHtml, playerJs) {
     if (!rotatorHtml.includes(SCRIPT_TAG)) {
         throw new Error(`expected '${SCRIPT_TAG}' (player.js include) in rotator.html — not found`)
     }
-    const inlined = rotatorHtml.replace(SCRIPT_TAG, '<script>\n' + playerJs + '\n</script>')
+    // CDATA keeps the inlined JS XML-safe (the direct UI page pipeline parses
+    // the final output as XML); browsers treat the markers as JS comments
+    const inlined = rotatorHtml.replace(SCRIPT_TAG, '<script>\n//<![CDATA[\n' + playerJs + '\n//]]>\n</script>')
     if (!inlined.includes(DECK_TOKEN_LITERAL)) {
         throw new Error('injection token "__ODM_DECK_JSON__" missing from rotator.html')
     }

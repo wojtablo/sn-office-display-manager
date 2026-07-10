@@ -92,11 +92,12 @@ export function buildDeck(screen: string, fields: SlideshowFields | null): Deck 
 
 /**
  * Serialize a deck for injection into the HTML template.
- * `<` is unicode-escaped so manager-supplied content (`links`, names) can never
- * produce `</script>` or any other tag inside the script context.
+ * `<` and `>` are unicode-escaped so manager-supplied content (`links`, names)
+ * can never produce `</script>`, any tag, or a CDATA terminator (`]]>`) inside
+ * the script context (the template's scripts are CDATA-wrapped for XML safety).
  */
 export function escapeDeckJson(deck: Deck): string {
-    return JSON.stringify(deck).replace(/</g, '\\u003c')
+    return JSON.stringify(deck).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
 }
 
 /** Token in the template that gets replaced (including its quotes). */

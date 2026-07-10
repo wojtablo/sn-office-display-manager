@@ -9,10 +9,10 @@ const {
 describe('inlinePlayerScript', () => {
     const html = `<html>${'<script src="player.js"></script>'}<script>window.__ODM_DECK__ = "__ODM_DECK_JSON__";</script></html>`
 
-    test('replaces the script tag with inline content', () => {
+    test('replaces the script tag with CDATA-wrapped inline content (XML-safe)', () => {
         const out = inlinePlayerScript(html, 'var x = 1')
         expect(out).not.toContain(SCRIPT_TAG)
-        expect(out).toContain('<script>\nvar x = 1\n</script>')
+        expect(out).toContain('<script>\n//<![CDATA[\nvar x = 1\n//]]>\n</script>')
     })
     test('throws when the script tag is missing', () => {
         expect(() => inlinePlayerScript('<html></html>', 'x')).toThrow(/player\.js/)

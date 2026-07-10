@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ODM Player</title>
 <style>
     html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
@@ -60,6 +60,7 @@
 
 <script src="player.js"></script>
 <script>
+//<![CDATA[
 /* Deck injection point. The server replaces the quoted token with the escaped
    deck JSON object. When the token survives (local file:// dev), the shell
    falls back to the mock deck below. */
@@ -80,8 +81,10 @@ window.__ODM_MOCK_DECK__ = {
     hoursStart: '00:01',
     hoursEnd: '23:59'
 };
+//]]>
 </script>
 <script>
+//<![CDATA[
 (function () {
     'use strict'
     var P = window.ODMPlayer
@@ -223,6 +226,7 @@ window.__ODM_MOCK_DECK__ = {
     applyState(true)
     window.requestAnimationFrame(animateBar)
 })()
+//]]>
 </script>
 </body>
 </html>

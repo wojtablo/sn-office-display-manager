@@ -2,7 +2,8 @@
 
 > App: Office Display Manager (`x_804244_odm`)
 > **Browser/display URL:** `https://<instance>/x_804244_odm_player.do?screen=<screen>`
-> (bootstrap page — handles login redirect and session tokens automatically).
+> (direct page — your player HTML only, zero platform markup; login redirect and
+> session tokens handled automatically).
 > The raw REST routes under `/api/x_804244_odm/player` are for API clients with
 > basic auth/tokens; opening them cookie-only in a browser yields 401 by platform
 > design (X-UserToken requirement).

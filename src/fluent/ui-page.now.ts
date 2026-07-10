@@ -1,24 +1,23 @@
 import { UiPage } from '@servicenow/sdk/core'
 
 /**
- * Bootstrap page for the ODM player: /x_804244_odm_player.do?screen=<user_name>
+ * The browser entry point: /x_804244_odm_player.do?screen=<user_name>
  *
- * Why it exists: the platform rejects cookie-only REST calls without an
- * X-UserToken header (CSRF protection), and a browser address bar cannot send
- * headers. This classic (non-direct) UI Page owns the session's g_ck token,
- * fetches the real player HTML from the Scripted REST route with that token,
- * and document.write()s it. Anonymous visitors get the platform login
- * redirect for free, then land back here.
+ * direct: true — the platform adds NOTHING (no UI16/Polaris wrapper, no
+ * platform JS/CSS). The page server-side renders the finished player document
+ * (template + deck + session token) via the OdmPlayerPage script include and
+ * prints it raw. Login redirect for anonymous visitors comes free.
  *
- * The page is a shim ONLY — the player itself remains template-as-code served
- * by REST. The bootstrap source (player-bootstrap.html) uses no Jelly
- * interpolation (no dollar-brace anywhere).
+ * The player itself stays template-as-code (rotator.html + player.js); this
+ * page is just the session-authenticated delivery path — the platform rejects
+ * cookie-only REST calls (X-UserToken CSRF rule), so REST alone cannot serve
+ * a browser address bar.
  */
-export const playerBootstrap = UiPage({
-    $id: Now.ID['odm-player-bootstrap'],
+export const playerPage = UiPage({
+    $id: Now.ID['odm-player-page'],
     endpoint: 'x_804244_odm_player.do',
     category: 'general',
-    direct: false,
-    description: 'ODM player bootstrap: fetches /api/x_804244_odm/player with the session token and replaces the document',
-    html: Now.include('../server/UiPage/player-bootstrap.html'),
+    direct: true,
+    description: 'ODM player — serves the fully rendered player HTML for a screen',
+    html: Now.include('../server/UiPage/player-page.html'),
 })
