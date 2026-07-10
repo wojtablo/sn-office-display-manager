@@ -548,6 +548,20 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_policy_action'
+                        id: '5d3cdf95323b44578c943380518bc029'
+                        key: {
+                            ui_policy: {
+                                id: 'b699ed92d8e74346b8250a53e9a45831'
+                                key: {
+                                    table: 'x_804244_odm_slideshow'
+                                    short_description: 'Player link is read-only (system-maintained)'
+                                }
+                            }
+                            field: 'player_link'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: '619c9698ee924a6da06cef04c547f36d'
                         key: {
@@ -1018,6 +1032,14 @@ declare global {
                         id: 'b50856cd73e0409fb4dfa69369a8fe98'
                         key: {
                             name: 'x_804244_odm.manager'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_policy'
+                        id: 'b699ed92d8e74346b8250a53e9a45831'
+                        key: {
+                            table: 'x_804244_odm_slideshow'
+                            short_description: 'Player link is read-only (system-maintained)'
                         }
                     },
                     {

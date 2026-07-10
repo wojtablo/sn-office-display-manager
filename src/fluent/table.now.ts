@@ -21,7 +21,7 @@ export const x_804244_odm_slideshow = Table({
         assigned_account: ReferenceColumn({
             label: 'Service account',
             referenceTable: 'sys_user',
-            hint: 'Technical account of the screen that displays this slideshow',
+            hint: 'The technical/service account this slideshow is displayed under. A screen logged in as this account (e.g. via Bomgar) plays this slideshow. The player link points here.',
         }),
         links: StringColumn({
             label: 'Links (comma-separated URLs)',
@@ -53,8 +53,9 @@ export const x_804244_odm_slideshow = Table({
         player_link: UrlColumn({
             label: 'Player link',
             maxLength: 512,
-            // not dictionary-readOnly: that would block the business rule's setValue too;
-            // manual edits are futile anyway — the rule rewrites the field on every save
+            // Read-only is enforced on the form by a UI Policy (see ui-policy.now.ts),
+            // not the dictionary flag — the SDK install path does not apply
+            // sys_dictionary.read_only to an existing column reliably.
             hint: 'Direct link to this slideshow on its screen — maintained automatically from the service account',
         }),
         refresh_interval: IntegerColumn({
