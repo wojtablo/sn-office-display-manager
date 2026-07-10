@@ -41,7 +41,11 @@ jobs:
       # already guarantees the committed docs match source, so no regen here.
       - run: npm run site
 
+      # enablement: turn Pages on (Source = GitHub Actions) via the API if it
+      # isn't already, so no manual repo setting is needed on a fresh repo.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
