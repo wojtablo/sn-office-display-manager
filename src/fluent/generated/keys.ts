@@ -16,18 +16,26 @@ declare global {
                     'acl-slideshow-fields-read': {
                         table: 'sys_security_acl'
                         id: '3594382cb71f485eb24be74446ab9ea9'
+                        deleted: true
                     }
                     'acl-slideshow-fields-write': {
                         table: 'sys_security_acl'
                         id: '6f22df36688a43a7bb8148b09e99af8e'
+                        deleted: true
+                    }
+                    'acl-slideshow-read': {
+                        table: 'sys_security_acl'
+                        id: 'fe537a2155e24772b088af2cedc69dfc'
                     }
                     'acl-slideshow-read-display-own': {
                         table: 'sys_security_acl'
                         id: '87247a72f31246c2b482df0ea24552f0'
+                        deleted: true
                     }
                     'acl-slideshow-read-manager': {
                         table: 'sys_security_acl'
                         id: '34b59345e4c44061b8bfbdaebab724be'
+                        deleted: true
                     }
                     'acl-slideshow-write': {
                         table: 'sys_security_acl'
@@ -110,6 +118,7 @@ declare global {
                     {
                         table: 'sys_user_role'
                         id: '01da09f8c34e07106292b34ed40131e9'
+                        deleted: true
                         key: {
                             name: 'x_804244_odm.admin'
                         }
@@ -158,6 +167,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: '1642fe0cabb34eefa05adbb26fe9ed17'
+                        deleted: true
                         key: {
                             sys_security_acl: '3594382cb71f485eb24be74446ab9ea9'
                             sys_user_role: {
@@ -198,6 +208,20 @@ declare global {
                             name: 'x_804244_odm_slideshow'
                             element: 'assigned_account'
                             language: 'en'
+                        }
+                    },
+                    {
+                        table: 'sys_security_acl_role'
+                        id: '1dec8da5ed1649d1bcd287c4fe04951e'
+                        deleted: true
+                        key: {
+                            sys_security_acl: '8e41b8f26f414dfb911ad632eca786a6'
+                            sys_user_role: {
+                                id: '901b25e81c4c4d0199c44d7f37c41a51'
+                                key: {
+                                    name: 'snc_internal'
+                                }
+                            }
                         }
                     },
                     {
@@ -481,6 +505,20 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_security_acl_role'
+                        id: '4a7ad9cbfa424f2bbdd6042be29983ba'
+                        deleted: true
+                        key: {
+                            sys_security_acl: 'f8c9d258af03417a971570e15372275e'
+                            sys_user_role: {
+                                id: 'c5989c7c20844e37884c221fa171214a'
+                                key: {
+                                    name: 'snc_internal'
+                                }
+                            }
+                        }
+                    },
+                    {
                         table: 'sys_dictionary'
                         id: '4e250e984aab4f5fae3cda83c93045fa'
                         key: {
@@ -573,6 +611,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: '64061f4b94d249298185241007a73eb5'
+                        deleted: true
                         key: {
                             sys_security_acl: '6f22df36688a43a7bb8148b09e99af8e'
                             sys_user_role: {
@@ -684,6 +723,7 @@ declare global {
                     {
                         table: 'sys_user_role_contains'
                         id: '79acbaac1f394460a35a604017c96dad'
+                        deleted: true
                         key: {
                             role: {
                                 id: '01da09f8c34e07106292b34ed40131e9'
@@ -702,6 +742,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: '7da372367d3c40008b530899a1e1bb6e'
+                        deleted: true
                         key: {
                             sys_security_acl: '87247a72f31246c2b482df0ea24552f0'
                             sys_user_role: {
@@ -814,6 +855,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: '8d1d4e4a01ae408da3910ac547cdfe62'
+                        deleted: true
                         key: {
                             sys_security_acl: '6a41e6ddd60c4b398cf23dd5de6a0e68'
                             sys_user_role: {
@@ -865,6 +907,7 @@ declare global {
                     {
                         table: 'sys_user_role'
                         id: '9c8efd09c2e440299e5b90a0dad45a8a'
+                        deleted: true
                         key: {
                             name: 'x_804244_odm.display'
                         }
@@ -1030,6 +1073,7 @@ declare global {
                     {
                         table: 'sys_user_role'
                         id: 'b50856cd73e0409fb4dfa69369a8fe98'
+                        deleted: true
                         key: {
                             name: 'x_804244_odm.manager'
                         }
@@ -1045,6 +1089,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: 'b6def0298dcf4a3395eaaa73eb8db3a1'
+                        deleted: true
                         key: {
                             sys_security_acl: 'f8c9d258af03417a971570e15372275e'
                             sys_user_role: {
@@ -1088,6 +1133,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: 'c3d0c706a7554885bed5e4183b4455ba'
+                        deleted: true
                         key: {
                             sys_security_acl: '34b59345e4c44061b8bfbdaebab724be'
                             sys_user_role: {
@@ -1180,6 +1226,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: 'd4c69805f38548a4b9be6651a49daa80'
+                        deleted: true
                         key: {
                             sys_security_acl: '8e41b8f26f414dfb911ad632eca786a6'
                             sys_user_role: {
@@ -1257,6 +1304,7 @@ declare global {
                     {
                         table: 'sys_security_acl_role'
                         id: 'e2979c5aa9aa428cbfaa267ace3a4abc'
+                        deleted: true
                         key: {
                             sys_security_acl: '3594382cb71f485eb24be74446ab9ea9'
                             sys_user_role: {
@@ -1287,6 +1335,20 @@ declare global {
                             }
                             element: '.begin_split'
                             position: '0'
+                        }
+                    },
+                    {
+                        table: 'sys_security_acl_role'
+                        id: 'e52637ab61364b14b7c228fb489f7408'
+                        deleted: true
+                        key: {
+                            sys_security_acl: '6a41e6ddd60c4b398cf23dd5de6a0e68'
+                            sys_user_role: {
+                                id: '6e0077c8feba47c2a01afd49c56062b0'
+                                key: {
+                                    name: 'snc_internal'
+                                }
+                            }
                         }
                     },
                     {
@@ -1384,6 +1446,20 @@ declare global {
                             }
                             element: 'slide_duration'
                             position: '6'
+                        }
+                    },
+                    {
+                        table: 'sys_security_acl_role'
+                        id: 'f604c5e83bae4d0f95d633b095d2c471'
+                        deleted: true
+                        key: {
+                            sys_security_acl: 'fe537a2155e24772b088af2cedc69dfc'
+                            sys_user_role: {
+                                id: 'f12ad776c4564720a429350ab09d2cab'
+                                key: {
+                                    name: 'snc_internal'
+                                }
+                            }
                         }
                     },
                     {

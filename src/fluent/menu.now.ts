@@ -1,10 +1,9 @@
 import { ApplicationMenu, Record } from '@servicenow/sdk/core'
-import { manager, display, admin } from './roles.now'
 
 /**
  * Navigator: "Office Display Manager"
- * - My slideshows  -> manager + display; filtered to created-by-me OR assigned-to-me
- * - All slides     -> admin only; unfiltered list
+ * - My slideshows  -> any authenticated user; filtered to created-by-me OR assigned-to-me
+ * - All slideshows -> platform admin only; unfiltered
  * Module visibility is navigation only; ACLs are the enforcement layer.
  */
 export const odmMenu = ApplicationMenu({
@@ -25,22 +24,21 @@ export const mySlideshowsModule = Record({
         link_type: 'FILTER',
         name: 'x_804244_odm_slideshow',
         filter: 'sys_created_by=javascript:gs.getUserName()^ORassigned_account=javascript:gs.getUserID()',
-        roles: [manager, display],
-        hint: 'Slideshows you created or that are assigned to you',
+        hint: 'Slideshows you created or that are assigned to your account',
         active: true,
         order: 100,
     },
 })
 
-export const allSlidesModule = Record({
+export const allSlideshowsModule = Record({
     $id: Now.ID['module-all-slides'],
     table: 'sys_app_module',
     data: {
-        title: 'All slides',
+        title: 'All slideshows',
         application: odmMenu,
         link_type: 'LIST',
         name: 'x_804244_odm_slideshow',
-        roles: [admin],
+        roles: ['admin'],
         hint: 'All slideshows (administration)',
         active: true,
         order: 200,

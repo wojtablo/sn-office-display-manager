@@ -11,8 +11,8 @@
 ## 1. Setting up a new screen
 
 1. **Create the technical account** (admin): `sys_user`, user_name per naming
-   convention `svc.display.<location>` (e.g. `svc.display.sd-room1`), strong password,
-   grant role **`x_804244_odm.display`** and nothing else.
+   convention `svc.display.<location>` (e.g. `svc.display.sd-room1`), strong password.
+   No app role needed — the account can open only the slideshow assigned to it.
 2. **Author the slideshow** (manager, from your desk): *Office Display Manager →
    My slideshows → New*:
    - **Links** — comma-separated URLs (newlines also work). Rules:

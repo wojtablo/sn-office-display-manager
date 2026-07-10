@@ -9,15 +9,16 @@ Enable teams to run slideshows of URLs (ServiceNow dashboards, reports, and exte
 web pages) on physical office displays, with easy administration from a normal user
 account.
 
-**Users:**
+**Users (no custom roles — access is ownership-based):**
 
-| Persona | Account | Role | Needs |
-|---|---|---|---|
-| Manager (e.g. Service Desk lead) | Normal account | `x_804244_odm.manager` | Author slideshows (links, duration, working hours); change what a display shows without touching it; works from the "My slideshows" module (can administer all records via list filters) |
-| Display (kiosk) | Technical account, one per physical screen | `x_804244_odm.display` | Log in once (via Bomgar), open player URL, run an infinite slide loop unattended; sees "My slideshows" (its assigned deck) |
-| App admin | Normal account | `x_804244_odm.admin` (contains `manager`) | Delegated app administration; sole access to the "All slides" module; **preview any screen's slideshow** by opening its player URL (`/player/<screen>`) or deck JSON |
+| Persona | Account | Needs |
+|---|---|---|
+| Author (any employee) | Normal account | Create slideshows (any logged-in user can); manage **their own** (creator); open the player of decks they created |
+| Display (kiosk) | Technical account, one per physical screen | Log in once (via Bomgar), open its player URL, run an infinite loop unattended. Can open only the deck **assigned to it** |
+| Platform admin | Normal account with `admin` | See/manage everything ("All slideshows" module); preview any screen's player |
 
-Employees without an app role have **no access** — no module, no records, 401/idle on the REST routes.
+There are **no `x_804244_odm.*` roles**. Authorization uses record ownership
+(`sys_created_by`, `assigned_account`) + platform `admin`.
 
 **Naming convention (operational, not enforced):** one technical account per screen,
 named after its location, e.g. `svc.display.sd-room1`. Since slideshows bind to
@@ -141,29 +142,38 @@ No slide table, no template table (template is code — see Rendering & API).
 - Entries must be **absolute** (`https://...`) or **root-relative** (`/sys_report_template.do?...`). Bare relative paths are rejected — the player page lives under `/api/x_804244_odm/player/...`, so a bare `sys_report.do` would wrongly resolve under `/api/`
 - Invalid entries (no parseable URL) are skipped, never break the deck
 
-### Roles, ACLs & Navigation
+### Authorization (ownership-based, no custom roles)
 
-**ACL matrix (slideshow table) — role-gated model:**
+Two enforcement surfaces:
 
-| Operation | `x_804244_odm.display` (tech accounts) | `x_804244_odm.manager` | `x_804244_odm.admin` |
-|---|---|---|---|
-| create | ✖ | ✔ | ✔ |
-| read | **own assigned deck only**: `assigned_account = me` | all records | all records |
-| write / delete | ✖ | all records (flat, no ownership conditions) | all records |
+**1. Table ACLs (managing records in the platform):**
 
-- Users without an app role: **no access** — no module, no records, idle card on the REST routes.
-- `x_804244_odm.admin` → contains `manager`; sole role that sees the "All slides" module. **Preview guarantee:** any admin (app admin via contained `manager` read-all, platform admin via `adminOverrides`) can open any screen's `/player/{screen}` URL and see exactly what that display is playing.
-- `x_804244_odm.display` → read-only on its own assigned deck + "My slideshows" module visibility (this resolves former Open Question 2: **kept, with purpose**).
-- **REST routes require an app role** (display/manager/admin); record access enforced by the table ACLs — calling another screen's URL without read rights yields the idle card, never data.
+| Operation | Who | Mechanism |
+|---|---|---|
+| create | any authenticated user | ACL script `answer = gs.isLoggedIn()` |
+| read | creator OR assigned service account | condition `sys_created_by=me ^OR assigned_account=me` |
+| write / delete | creator only | condition `sys_created_by=me` |
+| (all) | platform admin | `adminOverrides: true` |
+
+No role dependency — deliberately **not** keyed on `snc_internal` (absent on some
+instances; verified missing on the dev PDI). Create requires only a logged-in session.
+
+**2. Player open-time check (REST handler, `resolveDecision`):**
+Opening `/player/{screen}` (or its deck) resolves the active slideshow for that
+screen, then allows only when the current user is the **creator**, the **assigned
+service account**, or a **platform admin** — otherwise an **access-denied page** (403).
+The record is read with a plain `GlideRecord` (not `GlideRecordSecure`) so the handler
+can distinguish "no slideshow → idle card" from "exists but not yours → denied" and
+enforce the rule itself. No data leaks in the denied path.
 
 **Application menu `Office Display Manager`:**
 
-| Module | Visible to (roles) | Contents |
+| Module | Visible to | Contents |
 |---|---|---|
-| My slideshows | `x_804244_odm.manager`, `x_804244_odm.display` | slideshow list filtered `sys_created_by = me OR assigned_account = me` |
-| All slides | `x_804244_odm.admin` **only** (managers administer all records via list filters; their edit-all ACL right is unaffected) | unfiltered slideshow list |
+| My slideshows | any authenticated user | list filtered `sys_created_by = me OR assigned_account = me` |
+| All slideshows | platform `admin` only | unfiltered slideshow list |
 
-Module visibility is navigation only — ACLs are the enforcement layer.
+Module visibility is navigation only — ACLs + the open-time check are the enforcement layers.
 
 ## Rendering & API (core architecture)
 
@@ -338,6 +348,7 @@ Written down so nobody discovers them in production:
 - 2026-07-10 — Self-service ACL model adopted (any `snc_internal` user authors own decks), then **superseded same day** (below).
 - 2026-07-10 — **Supersedes self-service:** role-gated model — `display` reads only its assigned deck (no create/write), `manager`/`admin` full access, role-less users have no access; REST routes require an app role. `display` role kept with real purpose (module visibility + read-own ACL) — former Open Question 2 resolved.
 - 2026-07-10 — Application menu "Office Display Manager": module **My slideshows** (visible to `manager` + `display`, filtered `created by me OR assigned to me`) and **All slides** (visible to `x_804244_odm.admin` only — managers administer all records via list filters).
+- 2026-07-10 — **Supersedes ALL role-based security — no custom roles at all.** Removed `x_804244_odm.admin/manager/display`. Authorization is ownership-based: create = any logged-in user (ACL script `gs.isLoggedIn()`), read = creator OR assigned service account, write/delete = creator, admin via `adminOverrides`. Player open is gated in the handler (`resolveDecision`): creator OR assigned service account OR platform admin, else 403 access-denied. **Finding:** `snc_internal` does not exist on the dev PDI (750 roles, none is it) — so the create ACL uses `gs.isLoggedIn()` rather than that role. Modules: "My slideshows" (any authed user, filtered) + "All slideshows" (platform admin). Verified on-instance: creator/assigned/admin play, stranger 403; create by a role-less user works; cross-user read/write denied.
 - 2026-07-10 — **Browser auth finding:** the platform refuses cookie-only REST calls without `X-UserToken` (verified: real session → 401; +token → 200), and `authentication:false` routes don't bind the session user at all (verified: empty user context). A client-side bootstrap UI Page was tried and rejected (non-direct pages bury content in the platform shell).
 - 2026-07-10 — **Supersedes the bootstrap approach — direct UI Page delivery:** `/x_804244_odm_player.do?screen=...` (`direct: true`, zero platform markup) renders the finished player **server-side** via the `OdmPlayerPage` script include → `renderPlayerHtml()` (deck + session token injected; login redirect free for anonymous). Platform constraints discovered and absorbed: the direct-page pipeline parses output as XML — so no DOCTYPE (stripped by the bridge; quirks mode is harmless for this CSS), the template is polyglot (self-closed voids, CDATA-wrapped scripts), fingerprint separators are `` escape sequences (raw control chars are invalid XML), and `escapeDeckJson` also escapes `>` so manager content can't emit a CDATA terminator. REST routes remain for API/polling; template-as-code unchanged.
 - 2026-07-10 — **Admin preview guarantee made explicit:** users with the admin role (app or platform) can preview any screen's slideshow via its player/deck URLs. No code change — satisfied by role containment (`admin` ⊃ `manager` read-all) + `adminOverrides` on ACLs; verified live (platform-admin account fetched another screen's deck).

@@ -1,13 +1,19 @@
 import { Acl } from '@servicenow/sdk/core'
-import { manager, display } from './roles.now'
 
 /**
- * Role-gated ACL matrix (SPEC.md):
- * - manager (and admin via contains): full CRUD on all records
- * - display: read ONLY its own assigned deck (assigned_account = me)
- * - no app role: no access
- * Record-level ACLs + '*' field ACLs. Multiple ACLs on the same op are OR-ed.
+ * Ownership-based ACLs — no custom roles, and no dependency on `snc_internal`
+ * (which is absent on some instances). Platform admin passes all via adminOverrides.
+ *
+ * - create: any authenticated (logged-in) user
+ * - read:   the creator OR the assigned service account
+ * - write/delete: the creator only
+ *
+ * Player open-time access (creator / service account / admin) is enforced
+ * separately in the REST handler, not by these table ACLs.
  */
+
+const CREATOR = 'sys_created_by=javascript:gs.getUserName()'
+const CREATOR_OR_ASSIGNED = 'sys_created_by=javascript:gs.getUserName()^ORassigned_account=javascript:gs.getUserID()'
 
 export const slideshowCreate = Acl({
     $id: Now.ID['acl-slideshow-create'],
@@ -15,29 +21,18 @@ export const slideshowCreate = Acl({
     table: 'x_804244_odm_slideshow',
     operation: 'create',
     adminOverrides: true,
-    roles: [manager],
-    description: 'Managers (and admins) create slideshows',
+    script: 'answer = gs.isLoggedIn();',
+    description: 'Any authenticated user can create a slideshow',
 })
 
-export const slideshowReadManager = Acl({
-    $id: Now.ID['acl-slideshow-read-manager'],
+export const slideshowRead = Acl({
+    $id: Now.ID['acl-slideshow-read'],
     type: 'record',
     table: 'x_804244_odm_slideshow',
     operation: 'read',
     adminOverrides: true,
-    roles: [manager],
-    description: 'Managers (and admins) read all slideshows',
-})
-
-export const slideshowReadDisplayOwn = Acl({
-    $id: Now.ID['acl-slideshow-read-display-own'],
-    type: 'record',
-    table: 'x_804244_odm_slideshow',
-    operation: 'read',
-    adminOverrides: true,
-    roles: [display],
-    condition: 'assigned_account=javascript:gs.getUserID()',
-    description: 'Display accounts read only their own assigned slideshow',
+    condition: CREATOR_OR_ASSIGNED,
+    description: 'Creator or assigned service account can read the slideshow',
 })
 
 export const slideshowWrite = Acl({
@@ -46,8 +41,8 @@ export const slideshowWrite = Acl({
     table: 'x_804244_odm_slideshow',
     operation: 'write',
     adminOverrides: true,
-    roles: [manager],
-    description: 'Managers (and admins) update slideshows',
+    condition: CREATOR,
+    description: 'Only the creator can edit the slideshow',
 })
 
 export const slideshowDelete = Acl({
@@ -56,30 +51,6 @@ export const slideshowDelete = Acl({
     table: 'x_804244_odm_slideshow',
     operation: 'delete',
     adminOverrides: true,
-    roles: [manager],
-    description: 'Managers (and admins) delete slideshows',
-})
-
-/* Field-level: managers write all fields; display reads all fields of records
-   it can already see (record ACL gates which records). */
-export const slideshowFieldsRead = Acl({
-    $id: Now.ID['acl-slideshow-fields-read'],
-    type: 'record',
-    table: 'x_804244_odm_slideshow',
-    field: '*',
-    operation: 'read',
-    adminOverrides: true,
-    roles: [manager, display],
-    description: 'Field read for app roles (record ACLs gate row access)',
-})
-
-export const slideshowFieldsWrite = Acl({
-    $id: Now.ID['acl-slideshow-fields-write'],
-    type: 'record',
-    table: 'x_804244_odm_slideshow',
-    field: '*',
-    operation: 'write',
-    adminOverrides: true,
-    roles: [manager],
-    description: 'Field write for managers (and admins)',
+    condition: CREATOR,
+    description: 'Only the creator can delete the slideshow',
 })

@@ -6,21 +6,21 @@
 'use strict'
 
 let tables = {}
-let user = { id: 'test-user-sys-id', name: 'test.user' }
+let user = { id: 'test-user-sys-id', name: 'test.user', roles: [] }
 let failNextQuery = false
 
 function __setTable(name, rows) {
     tables[name] = rows
 }
-function __setUser(id, name) {
-    user = { id, name }
+function __setUser(id, name, roles) {
+    user = { id, name, roles: roles || [] }
 }
 function __failNextQuery() {
     failNextQuery = true
 }
 function __reset() {
     tables = {}
-    user = { id: 'test-user-sys-id', name: 'test.user' }
+    user = { id: 'test-user-sys-id', name: 'test.user', roles: [] }
     failNextQuery = false
 }
 
@@ -28,6 +28,8 @@ const gs = {
     getUserID: () => user.id,
     getUserName: () => user.name,
     getSessionToken: () => 'fake-session-token-123',
+    getSession: () => ({ getSessionToken: () => 'fake-session-token-123' }),
+    hasRole: (role) => (user.roles || []).indexOf(role) !== -1,
     addErrorMessage: () => undefined,
     info: () => undefined,
 }
