@@ -92,7 +92,7 @@ Executed 2026-07-10 against dev395356 (Australia patch3) — all automated items
   - manager creates ✓, reads all ✓, edits records created by others ✓
   - display reads own deck ✓, list shows only own record ✓, other screens' decks come back empty ✓, create 403 ✓, write-own 403 ✓
 - [ ] **Visual pass (human):** open `src/client/templates/rotator.html` locally — meteor bar fills/resets, standby appears outside mock hours, idle card on empty deck
-- [ ] **Visual pass (instance):** open `/api/x_804244_odm/player` as `svc.display.test1` in a browser — SD Test Wall loops
+- [ ] **Visual pass (instance):** open `/x_804244_odm_player.do` as `svc.display.test1` in a browser — SD Test Wall loops
 - [ ] **Overnight soak (≥ 12 h)** on a real display — SPEC success criterion 3.
       If the session dies: this is instance session/SSO policy (SPEC Open
       Question 1), not app code — check `glide.ui.session_timeout` and SSO
@@ -105,7 +105,7 @@ Executed 2026-07-10 against dev395356 (Australia patch3) — all automated items
 | Slideshows | `E2E Test Wall` (claude) · `SD Test Wall` (svc.display.test1, 10 s) · `NOC Wall - Incidents` (svc.display.test2, 3 same-instance lists incl. a `%2C`-encoded query, 20 s, 07–19) · `Lobby Welcome` (svc.display.lobby, external pages + a `#`-disabled entry, 45 s, 06–22) · `Weekend Draft` (svc.display.test2, **inactive** — activating it demonstrates the uniqueness rule) |
 | Test manager | `odm.test.manager` (role `x_804244_odm.manager`) |
 | Test displays | `svc.display.test1`, `svc.display.test2`, `svc.display.lobby` (role `x_804244_odm.display`) |
-| Player URLs | `/api/x_804244_odm/player/svc.display.test2` (NOC) · `/player/svc.display.lobby` (signage) · `/player/svc.display.test1` · deck JSON: append `/deck` |
+| Player URLs | `/x_804244_odm_player.do?screen=svc.display.test2` (NOC) · `?screen=svc.display.lobby` (signage) · `?screen=svc.display.test1` · deck JSON (API): `/api/x_804244_odm/player/<screen>/deck` |
 
 Passwords for test accounts were set at creation on 2026-07-10; rotate or delete
 these fixtures before any real rollout.
