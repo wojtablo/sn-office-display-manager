@@ -30,7 +30,7 @@ access is ownership-based (creator / assigned service account / platform admin).
 | --- | --- |
 | Application | Office Display Manager |
 | Scope | `x_804244_odm` |
-| Version | `1.0.0` |
+| Version | `1.0.1` |
 | REST base | `/api/x_804244_odm/player` |
 | Browser entry | `x_804244_odm_player.do` |
 <!-- END:generated:app -->
@@ -198,6 +198,36 @@ Default form for Slideshow: identity + assignment on top (with the direct player
 | `renderPlayerHtml(screen)` | Server-side render for the direct UI page (/x_804244_odm_player.do): the browser gets the finished document, nothing client-side. |
 | `serveDeckJson(request, response)` | GET /player/deck?screen=... |
 <!-- END:generated:app-code -->
+
+## Testing
+
+<!-- BEGIN:manual:testing -->
+Two layers, so most coverage is fast and instance-free:
+
+- **Unit tests (Jest)** cover the pure logic — the `links` parser, deck building, injection escaping, the player rotation/working-hours state machine, and the template generator — plus the Glide handler layer against an in-memory fake (`test/fakes/glide.js`), so no instance is needed and every branch is reachable.
+- **End-to-end tests (Playwright)** drive a real browser against a live instance: log in, open the direct player page, and assert the deck renders, slides rotate, and the open-time access check allows the creator / service account / admin (and `public` decks) while denying strangers. Fixtures (a disposable service account + slideshow) are created and torn down automatically; secrets come from a gitignored `.env` (`ODM_ADMIN_PASS`, `ODM_STRANGER_PASS`, …).
+
+The table below is generated from the test sources.
+<!-- END:manual:testing -->
+
+<!-- BEGIN:generated:tests -->
+**Unit (Jest):** 102 cases across 4 files — run `npm test`. **End-to-end (Playwright):** 3 cases against a live instance — run `npm run test:e2e`. (Counts derived from source; `test.each` rows counted individually.)
+
+### Unit tests (Jest)
+
+| File | Cases | Suites |
+| --- | --- | --- |
+| `test/deck.test.ts` | 21 | parseLinks · toPositiveInt · buildDeck · escapeDeckJson / injectDeck |
+| `test/handlers.test.ts` | 18 | access control (creator / service account / admin, else denied) · serveDeckJson resolution · renderPlayerHtml (direct UI page — the only HTML surface) · session token (the deck poll carries X-UserToken) |
+| `test/player.test.js` | 51 | parseHHMM · isWithinHours · nextIndex · normalizeDeck · resolveState · fingerprint has no separator-collision ambiguity · session token pass-through · addCacheBuster · deckChanged |
+| `test/template-lib.test.js` | 12 | inlinePlayerScript · stripLocalImports · generateRoutesModule |
+
+### End-to-end tests (Playwright)
+
+| File | Cases | Suites |
+| --- | --- | --- |
+| `test/e2e/player.spec.ts` | 3 | ODM player (live instance) |
+<!-- END:generated:tests -->
 
 ## File inventory
 
