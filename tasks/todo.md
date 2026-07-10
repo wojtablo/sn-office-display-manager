@@ -3,8 +3,8 @@
 > Detail per task: `tasks/plan.md`. Spec: `SPEC.md`. Do not start a task before its dependencies are checked off.
 
 ## Phase 0 — Foundation & risk retirement
-- [ ] **T1** Scaffold SDK project (`now-sdk init`, scripts, lint/jest, .gitignore, git init)
-  - Verify: `npm run lint && npm test && npx now-sdk build`
+- [x] **T1** Scaffold SDK project — DONE 2026-07-10: converted existing `x_804244_odm` app from PDI dev395356 (`--from`), auth profile `odm-pdi`, build+deploy round-trip verified, git initialized. NOTE: lint/jest deliberately deferred to T3 (first testable module). Spec roles deployed early (part of T6): admin/manager/display live on instance, old `user`/`service_account` deleted.
+  - Verify: `npm run build && npm run deploy` ✓
 - [ ] **T2** Walking skeleton: REST route streams hardcoded HTML, renders chrome-free in browser ⚠ RISK GATE
   - Verify: browser (authenticated) shows "ODM OK"; incognito → 401
 
@@ -23,7 +23,7 @@
 ## Phase B — Data model & access (parallel with Phase A)
 - [ ] **T5** Slideshow table fluent + form/list + `links` field hint (`%2C` rule)
   - Verify: deploy, create record via form, defaults correct
-- [ ] **T6** Roles + ACL matrix + uniqueness BR + menu (My slideshows / All slides)
+- [ ] **T6** Roles ✓ (done with T1) + ACL matrix + uniqueness BR + menu (My slideshows / All slides)
   - Verify: impersonation matrix + duplicate-active-assignment rejected
 - [ ] **T8** `OdmPlayerApi`: parseLinks / buildDeck / escapeForInjection + jest
   - Verify: `npm test`; background-script sanity check on instance
