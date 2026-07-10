@@ -20,6 +20,7 @@ function slideshowFieldsFor(userSysId: string): SlideshowFields | null {
     gr.setLimit(1)
     gr.query()
     if (gr.next()) {
+        const active = gr.getValue('active')
         return {
             name: gr.getValue('name'),
             links: gr.getValue('links'),
@@ -27,7 +28,7 @@ function slideshowFieldsFor(userSysId: string): SlideshowFields | null {
             refresh_interval: gr.getValue('refresh_interval'),
             hours_start: gr.getValue('hours_start'),
             hours_end: gr.getValue('hours_end'),
-            active: gr.getValue('active') === '1' || gr.getValue('active') === 'true',
+            active: active === '1' || active === 'true',
         }
     }
     return null
@@ -69,7 +70,7 @@ function queryParam(request: any, name: string): string {
     try {
         const v = request.queryParams && request.queryParams[name]
         if (!v) return ''
-        return String(Object.prototype.toString.call(v) === '[object Array]' ? v[0] : v)
+        return String(Array.isArray(v) ? v[0] : v)
     } catch (e) {
         return ''
     }
@@ -87,6 +88,22 @@ function writeHtml(response: any, deck: Deck): void {
     response.getStreamWriter().writeString(injectDeck(ROTATOR_HTML, deck))
 }
 
+/**
+ * Serve the deck for `screen`, falling back to an idle-card deck on any Glide
+ * failure — the player must never receive an error page or a stack trace.
+ */
+function respondSafely(response: any, screen: string, write: (response: any, deck: Deck) => void): void {
+    try {
+        write(response, deckForScreen(screen))
+    } catch (e) {
+        try {
+            write(response, buildDeck(screen || '', null))
+        } catch (e2) {
+            response.setStatus(500)
+        }
+    }
+}
+
 /** GET /player and GET /player/{screen} -> the player HTML document. */
 export function servePlayerHtml(request: any, response: any): void {
     const screen = pathParam(request, 'screen')
@@ -95,30 +112,12 @@ export function servePlayerHtml(request: any, response: any): void {
         serveDeckJson(request, response)
         return
     }
-    try {
-        writeHtml(response, deckForScreen(screen))
-    } catch (e) {
-        try {
-            // last resort: idle-card deck; never leak an error page
-            writeHtml(response, buildDeck(screen || '', null))
-        } catch (e2) {
-            response.setStatus(500)
-        }
-    }
+    respondSafely(response, screen, writeHtml)
 }
 
 /** GET /player/deck?screen=... and GET /player/{screen}/deck -> deck JSON (polling). */
 export function serveDeckJson(request: any, response: any): void {
-    const screen = pathParam(request, 'screen') !== '' && pathParam(request, 'screen') !== 'deck'
-        ? pathParam(request, 'screen')
-        : queryParam(request, 'screen')
-    try {
-        writeJson(response, deckForScreen(screen))
-    } catch (e) {
-        try {
-            writeJson(response, buildDeck(screen || '', null))
-        } catch (e2) {
-            response.setStatus(500)
-        }
-    }
+    const fromPath = pathParam(request, 'screen')
+    const screen = fromPath && fromPath !== 'deck' ? fromPath : queryParam(request, 'screen')
+    respondSafely(response, screen, writeJson)
 }

@@ -34,7 +34,7 @@ export function parseLinks(raw: string | null | undefined): Slide[] {
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i].trim()
         if (!entry || entry.charAt(0) === '#') continue
-        if (/^https?:\/\/\S+$/i.test(entry) || (entry.charAt(0) === '/' && /^\/\S*$/.test(entry))) {
+        if (/^https?:\/\/\S+$/i.test(entry) || /^\/\S*$/.test(entry)) {
             out.push({ url: entry })
         }
         // anything else (bare relative, garbage) is skipped by design

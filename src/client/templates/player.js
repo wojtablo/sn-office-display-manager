@@ -56,7 +56,7 @@
     function normalizeDeck(raw) {
         var d = raw && typeof raw === 'object' ? raw : {}
         var slides = []
-        if (Object.prototype.toString.call(d.slides) === '[object Array]') {
+        if (Array.isArray(d.slides)) {
             for (var i = 0; i < d.slides.length; i++) {
                 var s = d.slides[i]
                 if (s && typeof s.url === 'string' && s.url.length > 0) slides.push({ url: s.url })
