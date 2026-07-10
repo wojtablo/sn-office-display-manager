@@ -415,6 +415,91 @@ function renderInventory() {
 }
 
 // ---------------------------------------------------------------------------
+// Tests (Jest unit + Playwright E2E)
+// ---------------------------------------------------------------------------
+
+const TEST_FILE = /\.(test|spec)\.(ts|js)$/
+
+function walkTests(absDir, acc = []) {
+    if (!existsSync(absDir)) return acc
+    for (const name of readdirSync(absDir).sort()) {
+        if (name === '.DS_Store') continue
+        const abs = join(absDir, name)
+        if (statSync(abs).isDirectory()) walkTests(abs, acc)
+        else if (TEST_FILE.test(name)) acc.push(abs)
+    }
+    return acc
+}
+
+/** describe() titles + test-case count (test.each rows counted individually). */
+function analyzeTestFile(absPath) {
+    const sf = parse(absPath)
+    const describes = []
+    let cases = 0
+    const literal = (n) =>
+        n && (ts.isStringLiteral(n) || n.kind === ts.SyntaxKind.NoSubstitutionTemplateLiteral) ? n.text : ''
+    const visit = (node) => {
+        if (ts.isCallExpression(node)) {
+            const e = node.expression
+            if (ts.isIdentifier(e)) {
+                // describe(...) / test(...) / it(...)
+                if (e.text === 'describe') {
+                    const t = literal(node.arguments[0])
+                    if (t) describes.push(t)
+                } else if (e.text === 'test' || e.text === 'it') {
+                    cases += 1
+                }
+            } else if (ts.isPropertyAccessExpression(e) && ts.isIdentifier(e.expression)) {
+                // test.describe(...) (Playwright) / test.only(...) / it.skip(...)
+                if (e.name.text === 'describe') {
+                    const t = literal(node.arguments[0])
+                    if (t) describes.push(t)
+                } else if (
+                    (e.expression.text === 'test' || e.expression.text === 'it') &&
+                    (e.name.text === 'only' || e.name.text === 'skip')
+                ) {
+                    cases += 1
+                }
+            } else if (
+                ts.isCallExpression(e) &&
+                ts.isPropertyAccessExpression(e.expression) &&
+                ts.isIdentifier(e.expression.expression) &&
+                (e.expression.expression.text === 'test' || e.expression.expression.text === 'it') &&
+                e.expression.name.text === 'each'
+            ) {
+                // test.each([...])(...) — count the rows
+                const arr = e.arguments[0]
+                cases += arr && ts.isArrayLiteralExpression(arr) ? arr.elements.length : 1
+            }
+        }
+        ts.forEachChild(node, visit)
+    }
+    visit(sf)
+    return { describes, cases }
+}
+
+function renderTests() {
+    const files = walkTests(join(root, 'test'))
+    if (!files.length) return '_No tests found._'
+    const unit = []
+    const e2e = []
+    for (const abs of files) {
+        const { describes, cases } = analyzeTestFile(abs)
+        const row = [code(rel(abs)), cases, esc(describes.join(' · ') || '—')]
+        ;(rel(abs).includes('/e2e/') ? e2e : unit).push(row)
+    }
+    const total = (rows) => rows.reduce((n, r) => n + r[1], 0)
+    const parts = [
+        `**Unit (Jest):** ${total(unit)} cases across ${unit.length} files — run \`npm test\`. ` +
+            `**End-to-end (Playwright):** ${total(e2e)} cases against a live instance — run \`npm run test:e2e\`. ` +
+            '(Counts derived from source; `test.each` rows counted individually.)',
+    ]
+    if (unit.length) parts.push('### Unit tests (Jest)\n\n' + table(['File', 'Cases', 'Suites'], unit))
+    if (e2e.length) parts.push('### End-to-end tests (Playwright)\n\n' + table(['File', 'Cases', 'Suites'], e2e))
+    return parts.join('\n\n')
+}
+
+// ---------------------------------------------------------------------------
 // Marker-block assembly
 // ---------------------------------------------------------------------------
 
@@ -529,6 +614,26 @@ const doc = [
     '## Application code',
     '',
     generatedBlock('app-code', appCode || '_No exported server functions found._'),
+    '',
+    '## Testing',
+    '',
+    manualBlock(
+        prevDoc,
+        'testing',
+        'Two layers, so most coverage is fast and instance-free:\n\n' +
+            '- **Unit tests (Jest)** cover the pure logic — the `links` parser, deck building, ' +
+            'injection escaping, the player rotation/working-hours state machine, and the template ' +
+            'generator — plus the Glide handler layer against an in-memory fake (`test/fakes/glide.js`), ' +
+            'so no instance is needed and every branch is reachable.\n' +
+            '- **End-to-end tests (Playwright)** drive a real browser against a live instance: log in, ' +
+            'open the direct player page, and assert the deck renders, slides rotate, and the open-time ' +
+            'access check allows the creator / service account / admin (and `public` decks) while denying ' +
+            'strangers. Fixtures (a disposable service account + slideshow) are created and torn down ' +
+            'automatically; secrets come from a gitignored `.env` (`ODM_ADMIN_PASS`, `ODM_STRANGER_PASS`, …).\n\n' +
+            'The table below is generated from the test sources.'
+    ),
+    '',
+    generatedBlock('tests', renderTests()),
     '',
     '## File inventory',
     '',
