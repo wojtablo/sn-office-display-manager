@@ -11,6 +11,7 @@
         "build": "node scripts/build-template.mjs && npm run docs && now-sdk build",
         "deploy": "now-sdk install",
         "release": "node scripts/release.mjs",
+        "version": "npm run docs && git add DOCUMENTATION.md README.md",
         "transform": "now-sdk transform",
         "types": "now-sdk dependencies",
         "test": "jest",
