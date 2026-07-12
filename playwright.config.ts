@@ -10,12 +10,12 @@ try {
 /**
  * E2E config — drives a real browser against a live ServiceNow instance.
  * Secrets come from env (never committed). Required:
- *   ODM_INSTANCE       e.g. https://dev395356.service-now.com
+ *   ODM_INSTANCE       e.g. https://your-instance.service-now.com
  *   ODM_ADMIN_USER / ODM_ADMIN_PASS      (creates fixtures; is creator+admin)
  *   ODM_STRANGER_USER / ODM_STRANGER_PASS (a user who is neither creator nor the service account)
  * The E2E service account + slideshow are created/destroyed by global setup/teardown.
+ * global-setup enforces these via required() — a missing var fails loud there.
  */
-const instance = process.env.ODM_INSTANCE || 'https://dev395356.service-now.com'
 
 export default defineConfig({
     testDir: './test/e2e',
@@ -27,7 +27,7 @@ export default defineConfig({
     timeout: 60_000,
     reporter: [['list']],
     use: {
-        baseURL: instance,
+        baseURL: process.env.ODM_INSTANCE,
         ignoreHTTPSErrors: true,
         headless: true,
         actionTimeout: 15_000,

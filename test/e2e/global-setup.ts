@@ -15,7 +15,7 @@ import {
  * is both creator and platform admin; the service account is the assigned one.
  */
 export default async function globalSetup(): Promise<void> {
-    if (!ADMIN.pass) throw new Error('ODM_ADMIN_PASS is required for E2E')
+    // env presence is enforced by required() in fixture-ids on import
     const api = await request.newContext({
         baseURL: INSTANCE,
         extraHTTPHeaders: { Authorization: basicAuthHeader(ADMIN.user, ADMIN.pass), Accept: 'application/json' },
