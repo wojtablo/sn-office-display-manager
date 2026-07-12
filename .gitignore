@@ -23,3 +23,7 @@ coverage/
 
 # Local secrets
 .env
+
+# LikeC4 local build/preview output (site/c4 is generated in CI)
+architecture/build/
+architecture/dist/

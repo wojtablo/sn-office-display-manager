@@ -1,0 +1,119 @@
+specification {
+  element actor {
+    style {
+      shape person
+    }
+  }
+  element system
+  element container
+  element datastore {
+    style {
+      shape cylinder
+    }
+  }
+
+  tag external
+}
+
+model {
+  // ---- People ----
+  author = actor 'Author' {
+    description 'Any signed-in employee. Creates and manages their own slideshows.'
+  }
+  display = actor 'Office display' {
+    description 'A screen logged in as a technical service account (once, via Bomgar), running the player unattended.'
+  }
+  admin = actor 'Platform admin' {
+    description 'Full access to every slideshow.'
+  }
+
+  // ---- External systems ----
+  servicenow = system 'ServiceNow platform' {
+    #external
+    description 'Hosts the scoped app: authentication, ACLs, tables, UI pages, Scripted REST.'
+  }
+  content = system 'Content sources' {
+    #external
+    description 'Same-instance dashboards, reports and lists, plus external web pages shown as slides.'
+  }
+
+  // ---- The application ----
+  odm = system 'Office Display Manager' {
+    description 'Scoped app x_804244_odm. Slideshows of URLs shown on office displays.'
+
+    table = datastore 'Slideshow table' {
+      technology 'x_804244_odm_slideshow'
+      description 'The single custom table: links, service account, duration, working hours, active, public.'
+    }
+    rules = container 'ACLs + business rules' {
+      technology 'sys_security_acl, business rules'
+      description 'Ownership-based table access; one-active-slideshow-per-account; auto player link.'
+    }
+    uipage = container 'Player UI page' {
+      technology 'x_804244_odm_player.do (direct UI page)'
+      description 'Browser entry point. Emits the finished player document with no platform chrome.'
+    }
+    bridge = container 'OdmPlayerPage' {
+      technology 'Script include (Jelly bridge)'
+      description 'require()s the server module at the current app version and returns rendered HTML.'
+    }
+    routes = container 'player-routes module' {
+      technology 'Server module (deck + handlers)'
+      description 'resolveDecision (open-time access check), renderPlayerHtml, serveDeckJson, injection escaping.'
+    }
+    deckapi = container 'Deck REST route' {
+      technology 'GET /api/x_804244_odm/player/deck'
+      description 'Deck JSON the running player polls for live updates (X-UserToken).'
+    }
+    player = container 'Player template' {
+      technology 'rotator.html + player.js'
+      description 'Runs in the display browser: iframe rotation, meteor progress bar, working-hours standby, polling.'
+    }
+  }
+
+  // ---- Relationships ----
+  author -> odm.table 'creates / manages own slideshows'
+  admin -> odm.table 'manages all slideshows'
+  display -> odm.uipage 'opens the player URL'
+
+  odm.rules -> odm.table 'enforce create / read / write / delete'
+  odm.uipage -> odm.bridge 'getHtml(screen)'
+  odm.bridge -> odm.routes 'require() + renderPlayerHtml'
+  odm.routes -> odm.table 'resolve active slideshow + access check'
+  odm.uipage -> odm.player 'returns rendered HTML document'
+  odm.player -> odm.deckapi 'polls every refresh interval'
+  odm.deckapi -> odm.routes 'serveDeckJson'
+  odm.player -> content 'loads slide URLs in a sandboxed iframe'
+
+  odm -> servicenow 'runs on'
+}
+
+views {
+  view index {
+    title 'ODM — System Context'
+    include *
+    autoLayout TopBottom
+  }
+
+  view containers of odm {
+    title 'ODM — Containers'
+    include *
+    autoLayout TopBottom
+  }
+
+  dynamic view launch {
+    title 'ODM — Display launch & live update'
+
+    display -> odm.uipage 'open /x_804244_odm_player.do?screen=<account>'
+    odm.uipage -> odm.bridge 'getHtml(screen)'
+    odm.bridge -> odm.routes 'require() + renderPlayerHtml(screen)'
+    odm.routes -> odm.table 'active slideshow for screen + creator/service-account/admin/public check'
+    odm.routes -> odm.uipage 'HTML (deck + session token injected)'
+    odm.uipage -> odm.player 'browser renders the player'
+    odm.player -> content 'rotate slides in iframe'
+    odm.player -> odm.deckapi 'poll for changes'
+    odm.deckapi -> odm.player 'fresh deck JSON'
+
+    autoLayout LeftRight
+  }
+}

@@ -5,8 +5,9 @@ name: Pages
 on:
   push:
     branches: [main]
-    paths: # only rebuild the site when the docs (or the site builder) change
+    paths: # only rebuild the site when the docs, the C4 model, or the builder change
       - docs/**
+      - architecture/**
       - scripts/build-site.mjs
       - .github/workflows/pages.yml
   workflow_dispatch: # allow a manual publish from the Actions tab

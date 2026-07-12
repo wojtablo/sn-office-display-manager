@@ -3,12 +3,14 @@
  *
  * Input : docs/*.md  (documentations.md + tests.md are generated; others, e.g.
  *         runbook.md, are authored — any .md dropped in docs/ becomes a page)
- * Output: site/*.html  (deployed to GitHub Pages by .github/workflows/pages.yml)
+ *         architecture/*.c4 → the interactive "C4 model" page (built with LikeC4)
+ * Output: site/*.html + site/c4/index.html  (deployed to GitHub Pages by pages.yml)
  *
  * The Markdown is the single source of truth; this only wraps it in a styled,
  * theme-aware shell and builds a left-hand navigation shared across pages.
  */
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { dirname, join, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { marked } from 'marked'
@@ -21,6 +23,7 @@ const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 // Nav order: known pages first (in this order), everything else alphabetical.
 const ORDER = [
     'documentations',
+    'c4',
     'data-model',
     'rest-api',
     'access-control',
@@ -33,6 +36,7 @@ const ORDER = [
 // Nav labels; unknown pages fall back to a title-cased filename.
 const LABELS = {
     documentations: 'Overview',
+    c4: 'C4 model',
     'data-model': 'Data model',
     'rest-api': 'REST API',
     'access-control': 'Access control',
@@ -43,15 +47,17 @@ const LABELS = {
     runbook: 'Runbook',
 }
 
+// The C4 model is not a markdown page — it embeds the LikeC4 single-file app
+// (built into site/c4/index.html) in a full-height iframe within the docs shell.
+const C4_PAGE = { slug: 'c4', href: 'c4.html', label: 'C4 model', title: 'C4 model', embed: 'c4/index.html' }
+
 marked.setOptions({ gfm: true, headerIds: true, mangle: false })
 
 const titleCase = (s) => s.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 // documentations is the landing page (index.html); others keep their name.
 const outName = (slug) => (slug === 'documentations' ? 'index.html' : `${slug}.html`)
 
-const pages = readdirSync(docsDir)
-    .filter((f) => f.endsWith('.md'))
-    .map((f) => basename(f, '.md'))
+const pages = [...readdirSync(docsDir).filter((f) => f.endsWith('.md')).map((f) => basename(f, '.md')), C4_PAGE.slug]
     .sort((a, b) => {
         const ia = ORDER.indexOf(a)
         const ib = ORDER.indexOf(b)
@@ -59,6 +65,7 @@ const pages = readdirSync(docsDir)
         return a.localeCompare(b)
     })
     .map((slug) => {
+        if (slug === C4_PAGE.slug) return C4_PAGE
         const md = readFileSync(join(docsDir, `${slug}.md`), 'utf8')
         return {
             slug,
@@ -188,6 +195,30 @@ const THEME_SWITCH_HTML = `<div class="theme-switch" role="group" aria-label="Co
   </div>`
 
 function renderPage(page) {
+    if (page.embed) {
+        // Full-height iframe of the LikeC4 single-file app inside the docs shell.
+        return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${escapeHtml(page.title)} — ${escapeHtml(pkg.name)}</title>
+<script>${THEME_INIT}</script>
+<style>${CSS}</style>
+</head>
+<body>
+${THEME_SWITCH_HTML}
+<div class="layout">
+  ${nav(page.href)}
+  <main class="content content-embed">
+    <iframe class="c4-frame" src="${escapeHtml(page.embed)}" title="${escapeHtml(page.title)}"></iframe>
+  </main>
+</div>
+<script>${THEME_SWITCH}</script>
+</body>
+</html>
+`
+    }
     const body = addHeadingIds(
         marked
             .parse(page.md)
@@ -285,6 +316,10 @@ const CSS = `
   td code { white-space:nowrap; }
   .site-foot { margin-top:4rem; padding-top:1rem; border-top:1px solid var(--border); color:var(--muted); font-size:.85rem; }
 
+  /* C4 model page: the LikeC4 app fills the content column. */
+  .content-embed { padding:0; margin:0; max-width:none; }
+  .c4-frame { display:block; width:100%; height:100vh; border:0; background:var(--bg); }
+
   .toc {
     position:sticky; top:0; align-self:stretch; flex:0 0 220px; width:220px;
     height:100vh; overflow-y:auto; padding:3.5rem 1.25rem 2rem; border-left:1px solid var(--border);
@@ -314,7 +349,16 @@ for (const page of pages) writeFileSync(join(outDir, page.href), renderPage(page
 // .nojekyll: serve the HTML as-is; skip GitHub's Jekyll processing.
 writeFileSync(join(outDir, '.nojekyll'), '')
 
-console.log(`build-site: ${pages.length} page(s) → ${pages.map((p) => p.href).join(', ')}`)
+// Build the interactive C4 model as one self-contained file at site/c4/index.html
+// (embedded by the "C4 model" page). Uses the wasm layout — no graphviz needed.
+const likec4Bin = join(root, 'node_modules', '.bin', 'likec4')
+execFileSync(
+    likec4Bin,
+    ['build', '--output-single-file', '-o', join(outDir, 'c4'), '-t', 'ODM Architecture', join(root, 'architecture')],
+    { stdio: 'inherit' }
+)
+
+console.log(`build-site: ${pages.length} page(s) → ${pages.map((p) => p.href).join(', ')}; + c4/index.html`)
 
 function escapeHtml(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
