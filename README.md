@@ -27,7 +27,10 @@ npm run deploy     # now-sdk install (uses .now/ credential alias)
 npm run release -- patch   # build, test, bump, deploy, tag, push
 ```
 
-See [docs/documentations.md](./docs/documentations.md) and [docs/tests.md](./docs/tests.md) for the technical reference — also published to GitHub Pages.
+The technical reference lives in [`docs/`](./docs/) as topic pages — Overview,
+Data model, REST API, Access control, Business logic, User interface, Reference,
+Tests, and Runbook — and is published to GitHub Pages with sidebar navigation.
+Start at [docs/documentations.md](./docs/documentations.md) (the Overview page).
 
 ## Authentication
 

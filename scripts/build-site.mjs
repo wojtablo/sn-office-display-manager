@@ -19,9 +19,29 @@ const outDir = join(root, 'site')
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 
 // Nav order: known pages first (in this order), everything else alphabetical.
-const ORDER = ['documentations', 'tests']
+const ORDER = [
+    'documentations',
+    'data-model',
+    'rest-api',
+    'access-control',
+    'business-logic',
+    'user-interface',
+    'reference',
+    'tests',
+    'runbook',
+]
 // Nav labels; unknown pages fall back to a title-cased filename.
-const LABELS = { documentations: 'Documentation', tests: 'Tests', runbook: 'Runbook' }
+const LABELS = {
+    documentations: 'Overview',
+    'data-model': 'Data model',
+    'rest-api': 'REST API',
+    'access-control': 'Access control',
+    'business-logic': 'Business logic',
+    'user-interface': 'User interface',
+    reference: 'Reference',
+    tests: 'Tests',
+    runbook: 'Runbook',
+}
 
 marked.setOptions({ gfm: true, headerIds: true, mangle: false })
 
