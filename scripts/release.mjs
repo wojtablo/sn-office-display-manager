@@ -68,8 +68,10 @@ guard(!run('git', ['status', '--porcelain']), 'Working tree is not clean. Commit
 const remotes = run('git', ['remote']).split('\n').filter(Boolean)
 guard(remotes.includes('origin'), "No 'origin' remote configured — `git remote add origin <url>` before releasing.")
 if (!dryRun && remotes.includes('origin')) {
+    // No --tags: it would try to clobber existing local tags (which differ after
+    // a history rewrite) and exit non-zero. We only need origin/main here.
     try {
-        run('git', ['fetch', 'origin', 'main', '--tags'])
+        run('git', ['fetch', 'origin', 'main'])
     } catch {
         fail('Could not fetch origin/main — check network/credentials before releasing.')
     }
