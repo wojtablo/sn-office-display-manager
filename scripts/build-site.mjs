@@ -20,6 +20,10 @@ const docsDir = join(root, 'docs')
 const outDir = join(root, 'site')
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 
+// Footer shown on every page except the C4 model (its embed has no footer).
+const REPO_URL = 'https://github.com/wojtablo/sn-office-display-manager'
+const FOOTER = `© ${new Date().getFullYear()} Wojciech Mikołajewski · Office Display Manager · <a href="${REPO_URL}" target="_blank" rel="noopener">Source on GitHub ↗</a>`
+
 // Nav order: known pages first (in this order), everything else alphabetical.
 const ORDER = [
     'documentations',
@@ -243,7 +247,7 @@ ${THEME_SWITCH_HTML}
   ${nav(page.href)}
   <main class="content">
 ${body}
-    <footer class="site-foot">Generated from source — do not edit these pages directly; update the code and rerun the docs generator.</footer>
+    <footer class="site-foot">${FOOTER}</footer>
   </main>
   ${onThisPage}
 </div>
