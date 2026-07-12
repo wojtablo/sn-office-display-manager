@@ -154,6 +154,39 @@ const SCROLLSPY = `
 })();
 `
 
+// Dark palette — shared by the OS-auto rule and the explicit "dark" choice.
+const DARK_VARS =
+    '--bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --border:#30363d; --accent:#4493f8; ' +
+    '--code-bg:#161b22; --thead-bg:#161b22; --row-alt:#11161d; --side-bg:#0b0f14;'
+
+// Runs in <head> before paint — applies the saved choice so there is no flash.
+const THEME_INIT = `(function(){try{var t=localStorage.getItem('odm-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`
+
+// Wires the Auto/Light/Dark switch. Auto = follow the OS (no data-theme attr).
+const THEME_SWITCH = `
+(function () {
+  var root = document.documentElement, saved = null;
+  try { saved = localStorage.getItem('odm-theme'); } catch (e) {}
+  var mode = (saved === 'light' || saved === 'dark') ? saved : 'auto';
+  var btns = [].slice.call(document.querySelectorAll('.theme-switch button'));
+  function apply(m) {
+    mode = m;
+    if (m === 'auto') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', m);
+    try { m === 'auto' ? localStorage.removeItem('odm-theme') : localStorage.setItem('odm-theme', m); } catch (e) {}
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set') === m)); });
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { apply(b.getAttribute('data-set')); }); });
+  apply(mode);
+})();
+`
+
+const THEME_SWITCH_HTML = `<div class="theme-switch" role="group" aria-label="Color theme">
+    <button type="button" data-set="auto" aria-pressed="false" title="Match your system">Auto</button>
+    <button type="button" data-set="light" aria-pressed="false">Light</button>
+    <button type="button" data-set="dark" aria-pressed="false">Dark</button>
+  </div>`
+
 function renderPage(page) {
     const body = addHeadingIds(
         marked
@@ -168,9 +201,11 @@ function renderPage(page) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${escapeHtml(page.title)}</title>
+<script>${THEME_INIT}</script>
 <style>${CSS}</style>
 </head>
 <body>
+${THEME_SWITCH_HTML}
 <div class="layout">
   ${nav(page.href)}
   <main class="content">
@@ -180,19 +215,35 @@ ${body}
   ${onThisPage}
 </div>
 <script>${SCROLLSPY}</script>
+<script>${THEME_SWITCH}</script>
 </body>
 </html>
 `
 }
 
 const CSS = `
-  /* GitHub Light — light-only (does not follow the OS dark setting). */
+  /* GitHub Light. Default follows the OS; the top-right switch overrides it. */
   :root {
-    color-scheme: light;
+    color-scheme: light dark;
     --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --border:#d1d9e0; --accent:#0969da;
     --code-bg:#f6f8fa; --thead-bg:#f6f8fa; --row-alt:#fbfcfd; --side-bg:#f6f8fa;
   }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme]) { ${DARK_VARS} } }
+  :root[data-theme="dark"] { ${DARK_VARS} }
+  :root[data-theme="light"] { color-scheme: light; }
   * { box-sizing:border-box; }
+
+  .theme-switch {
+    position:fixed; top:.7rem; right:1rem; z-index:30; display:flex; gap:2px;
+    background:var(--side-bg); border:1px solid var(--border); border-radius:8px; padding:2px;
+    box-shadow:0 1px 3px rgba(0,0,0,.10);
+  }
+  .theme-switch button {
+    border:0; background:transparent; color:var(--muted); cursor:pointer;
+    font:inherit; font-size:.75rem; line-height:1; padding:.25rem .55rem; border-radius:6px;
+  }
+  .theme-switch button:hover { color:var(--fg); }
+  .theme-switch button[aria-pressed="true"] { background:var(--accent); color:#fff; }
   html { scroll-behavior:smooth; }
   body { margin:0; background:var(--bg); color:var(--fg);
     font:16px/1.6 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
@@ -236,7 +287,7 @@ const CSS = `
 
   .toc {
     position:sticky; top:0; align-self:stretch; flex:0 0 220px; width:220px;
-    height:100vh; overflow-y:auto; padding:2.75rem 1.25rem 2rem; border-left:1px solid var(--border);
+    height:100vh; overflow-y:auto; padding:3.5rem 1.25rem 2rem; border-left:1px solid var(--border);
   }
   .toc-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
     font-weight:600; margin-bottom:.7rem; }
