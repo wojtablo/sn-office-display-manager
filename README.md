@@ -7,7 +7,7 @@ ServiceNow scoped application, built with the ServiceNow Fluent SDK.
 | --- | --- |
 | Application | Office Display Manager |
 | Scope | `x_804244_odm` |
-| Version | `1.0.5` |
+| Version | `1.0.6` |
 | REST base | `/api/x_804244_odm/player` |
 | Browser entry | `x_804244_odm_player.do` |
 <!-- END:generated:app -->
