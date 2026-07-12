@@ -299,7 +299,7 @@ const CSS = `
   .links a:hover { background:var(--border); }
   .links a.active { background:var(--accent); color:#fff; font-weight:600; }
 
-  .content { flex:1 1 auto; min-width:0; max-width:820px; margin:0 auto; padding:2.5rem 2.5rem 5rem; }
+  .content { flex:1 1 auto; min-width:0; max-width:1110px; margin:0 auto; padding:2.5rem 2.5rem 5rem; }
   h1,h2,h3 { line-height:1.25; margin:2rem 0 1rem; scroll-margin-top:1.5rem; }
   h1 { font-size:2rem; padding-bottom:.4rem; border-bottom:1px solid var(--border); margin-top:0; }
   h2 { font-size:1.45rem; padding-bottom:.3rem; border-bottom:1px solid var(--border); margin-top:2.6rem; }
