@@ -5,7 +5,16 @@ node_modules/
 target/
 site/
 *.tsbuildinfo
-.jest_cache.claude/
+.jest_cache/
+
+# Build output / reports
+coverage/
+
+# Local Claude Code settings (keep .claude/CLAUDE.md tracked)
+.claude/settings.local.json
+
+# Repowise index/cache (regenerated on re-index)
+.repowise/
 
 # Playwright E2E
 /test-results/

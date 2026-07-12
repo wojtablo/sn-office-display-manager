@@ -71,7 +71,6 @@ function generateRoutesModule({ inlinedHtml, deckSource, handlersSource }) {
 module.exports = {
     SCRIPT_TAG,
     DECK_TOKEN_LITERAL,
-    BANNER,
     inlinePlayerScript,
     stripLocalImports,
     generateTemplatesModule,
