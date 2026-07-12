@@ -186,16 +186,11 @@ ${body}
 }
 
 const CSS = `
-  /* GitHub Light (refined), with an auto dark variant. */
+  /* GitHub Light — light-only (does not follow the OS dark setting). */
   :root {
+    color-scheme: light;
     --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --border:#d1d9e0; --accent:#0969da;
     --code-bg:#f6f8fa; --thead-bg:#f6f8fa; --row-alt:#fbfcfd; --side-bg:#f6f8fa;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --border:#30363d; --accent:#4493f8;
-      --code-bg:#161b22; --thead-bg:#161b22; --row-alt:#11161d; --side-bg:#0b0f14;
-    }
   }
   * { box-sizing:border-box; }
   html { scroll-behavior:smooth; }
