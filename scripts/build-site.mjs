@@ -30,6 +30,7 @@ const ORDER = [
     'business-logic',
     'user-interface',
     'reference',
+    'build-process',
     'tests',
     'runbook',
 ]
@@ -43,6 +44,7 @@ const LABELS = {
     'business-logic': 'Business logic',
     'user-interface': 'User interface',
     reference: 'Reference',
+    'build-process': 'Build process',
     tests: 'Tests',
     runbook: 'Runbook',
 }
@@ -95,7 +97,8 @@ ${links}
 function slugify(inner) {
     return (
         inner
-            .replace(/<[^>]+>/g, '')
+            .replace(/<[^>]+>/g, '') // strip inline tags
+            .replace(/&[a-z0-9#]+;/gi, ' ') // drop HTML entities (e.g. &amp;) so slugs stay clean
             .toLowerCase()
             .replace(/[^\w]+/g, '-')
             .replace(/^-+|-+$/g, '') || 'section'
@@ -127,9 +130,8 @@ function tocItems(html) {
 /** Right-hand "On this page" nav — omitted when a page has too few headings. */
 function toc(items) {
     if (items.length < 2) return ''
-    const links = items
-        .map((i) => `      <a href="#${i.id}" class="lvl-${i.level}">${escapeHtml(i.text)}</a>`)
-        .join('\n')
+    // i.text is extracted from rendered HTML (entities already encoded) — do not re-escape.
+    const links = items.map((i) => `      <a href="#${i.id}" class="lvl-${i.level}">${i.text}</a>`).join('\n')
     return `<aside class="toc">
     <div class="toc-title">On this page</div>
     <nav class="toc-links">
